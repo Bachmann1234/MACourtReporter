@@ -1,8 +1,22 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  plugins: ['@typescript-eslint'],
-  extends: 'standard-with-typescript',
+  plugins: [
+    '@typescript-eslint',
+    'jest',
+    'eslint-comments',
+    'import',
+    'node'
+  ],
+  extends: [
+    'standard-with-typescript', 
+    'prettier', 
+    'prettier/@typescript-eslint',
+    'plugin:jest/recommended',
+    'plugin:eslint-comments/recommended',
+    'plugin:import/typescript',
+    'plugin:node/recommended'
+  ],
   parserOptions: {
     project: './tsconfig.json'
   },
