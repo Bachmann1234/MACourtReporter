@@ -9,6 +9,7 @@ module.exports = {
   rules: {
     '@typescript-eslint/no-redeclare': 'off',
     semi: 'off',
-    '@typescript-eslint/semi': ['error', 'always']
+    '@typescript-eslint/semi': ['error', 'always'],
+    'no-var': 2
   }
 };
