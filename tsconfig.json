@@ -4,8 +4,13 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "strict": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "baseUrl": "src",
+    "paths": {
+      "*": ["*"]
+    }
   },
+  "moduleResolution": "node",
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

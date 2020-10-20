@@ -7,14 +7,11 @@ module.exports = {
     'prettier/@typescript-eslint',
     'plugin:jest/recommended',
     'plugin:eslint-comments/recommended',
-    'plugin:import/typescript',
-    'plugin:node/recommended'
+    'plugin:import/typescript'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json'
   },
-  rules: {
-    'node/no-unsupported-features/es-syntax': 0
-  }
+  rules: {}
 };
