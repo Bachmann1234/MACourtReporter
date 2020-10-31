@@ -9,6 +9,7 @@
     "@types/pino": "^6.3.2",
     "axios": "^0.20.0",
     "cheerio": "^1.0.0-rc.3",
+    "dotenv": "^8.2.0",
     "pino": "^6.7.0"
   },
   "devDependencies": {
@@ -37,7 +38,8 @@
   "scripts": {
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "test": "ts-jest",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "queryBills": "tsc && node --tls-min-v1.0 ./dist/scripts/queryRecentBills.js"
   },
   "repository": {
     "type": "git",
