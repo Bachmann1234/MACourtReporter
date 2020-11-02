@@ -1,7 +1,19 @@
 import Pino from 'pino';
-import { CURRENT_LEGISLATURE } from '../legislature/generalCourt';
+import { getCurrentLegislature } from '../legislature/generalCourt';
 import { queryRecentBills } from '../clients/malegislature';
 
 const logger = Pino();
 
-queryRecentBills(CURRENT_LEGISLATURE).then(() => logger.info('Done!'));
+logger.info(
+  `Querying for recent bills from MA General Court ${getCurrentLegislature().courtNumber}`
+);
+queryRecentBills(getCurrentLegislature())
+  .then((bills) => {
+    bills.forEach((bill) => {
+      logger.info(
+        `${bill.billNumber}: ${bill.summary}. Filed by: ${bill.filedBy}. Learn more: ${bill.url}`
+      );
+    });
+    logger.info('Done!');
+  })
+  .catch((error) => logger.error(error));

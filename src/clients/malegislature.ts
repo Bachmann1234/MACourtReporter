@@ -1,9 +1,6 @@
-import axios, { AxiosResponse } from 'axios';
-import Pino from 'pino';
+import axios from 'axios';
 import cheerio from 'cheerio';
 import { GeneralCourt } from '../legislature/generalCourt';
-
-const logger = Pino();
 
 const ROOT_PAGE = 'https://malegislature.gov';
 
@@ -14,8 +11,8 @@ export type ScrapedBill = {
   url: String;
 };
 
-function processSearchPage(response: AxiosResponse): ScrapedBill[] {
-  const $ = cheerio.load(response.data);
+export function findBillsInSearchPage(pageHtml: string): ScrapedBill[] {
+  const $ = cheerio.load(pageHtml);
   return $('#searchTable tbody tr')
     .map((i, elem) => {
       const [, billNumber, filedBy, summary] = $(elem).find('td').toArray();
@@ -30,17 +27,8 @@ function processSearchPage(response: AxiosResponse): ScrapedBill[] {
     .get();
 }
 
-export async function queryRecentBills(legislature: GeneralCourt): Promise<void> {
+export async function queryRecentBills(legislature: GeneralCourt): Promise<ScrapedBill[]> {
   const courtUrl = `${ROOT_PAGE}/Bills/Search?SearchTerms=&Page=1&Refinements%5Blawsgeneralcourt%5D=${legislature.searchId}&SortManagedProperty=lawsbillnumber&Direction=desc`;
-  logger.info(`Querying for recent bills from MA General Court ${legislature.courtNumber}`);
-  try {
-    const response = await axios.get(courtUrl);
-    processSearchPage(response).forEach((bill) => {
-      logger.info(
-        `${bill.billNumber}: ${bill.summary}. Filed by: ${bill.filedBy}. Learn more: ${bill.url}`
-      );
-    });
-  } catch (error) {
-    logger.error(error);
-  }
+  const response = await axios.get(courtUrl);
+  return findBillsInSearchPage(response.data);
 }

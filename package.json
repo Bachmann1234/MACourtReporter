@@ -38,9 +38,10 @@
   "scripts": {
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "build": "npm run format; tsc; cp -n DigiCertSha2SecureServerCA.pem dist || true",
-    "test": "ts-jest",
+    "test": "jest",
     "lint": "eslint . --fix",
-    "queryBills": "npm run build && NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/scripts/queryRecentBills.js"
+    "queryBills": "npm run build && NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/scripts/queryRecentBills.js",
+    "coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",

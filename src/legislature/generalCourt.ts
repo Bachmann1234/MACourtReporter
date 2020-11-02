@@ -3,11 +3,17 @@ export type GeneralCourt = {
   searchId: string;
 };
 
-const maGeneralCourts = [
-  {
+export const maGeneralCourts: { [index: string]: GeneralCourt } = {
+  '191': {
     courtNumber: 191,
     searchId: '3139317374202843757272656e7429'
   }
-];
+};
 
-export const CURRENT_LEGISLATURE = maGeneralCourts[maGeneralCourts.length - 1];
+export function getLegislature(number: number) {
+  return maGeneralCourts[number.toString()];
+}
+
+export function getCurrentLegislature() {
+  return getLegislature(191);
+}
