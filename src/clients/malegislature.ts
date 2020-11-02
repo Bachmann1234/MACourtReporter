@@ -24,7 +24,7 @@ export function validatePotentialBill(bill: ScrapedBill) {
       bill.billNumber.match(/H\.\d+/g)
     )
   ) {
-    logger.error({ bill: bill }, 'Extracted malformed bill');
+    logger.error({ bill }, 'Extracted malformed bill');
     throw Error('Bill looks strange');
   }
 }

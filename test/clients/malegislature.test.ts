@@ -1,4 +1,4 @@
-import { loadTextFixture } from '../fixtures/utils';
+import loadTextFixture from '../utils/utils';
 import { findBillsInSearchPage, validatePotentialBill } from '../../src/clients/malegislature';
 
 test('Extracts bills from the ma bill search page', () => {
