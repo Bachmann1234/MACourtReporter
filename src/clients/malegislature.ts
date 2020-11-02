@@ -1,8 +1,11 @@
 import axios from 'axios';
+import Pino from 'pino';
 import cheerio from 'cheerio';
 import { GeneralCourt } from '../legislature/generalCourt';
 
 const ROOT_PAGE = 'https://malegislature.gov';
+
+const logger = Pino();
 
 export type ScrapedBill = {
   billNumber: string;
@@ -11,18 +14,35 @@ export type ScrapedBill = {
   url: String;
 };
 
+export function validatePotentialBill(bill: ScrapedBill) {
+  if (
+    !(
+      bill.billNumber &&
+      bill.summary &&
+      bill.filedBy &&
+      bill.url &&
+      bill.billNumber.match(/H\.\d+/g)
+    )
+  ) {
+    logger.error({ bill: bill }, 'Extracted malformed bill');
+    throw Error('Bill looks strange');
+  }
+}
+
 export function findBillsInSearchPage(pageHtml: string): ScrapedBill[] {
   const $ = cheerio.load(pageHtml);
   return $('#searchTable tbody tr')
     .map((i, elem) => {
       const [, billNumber, filedBy, summary] = $(elem).find('td').toArray();
       const billNumberElement = $(billNumber);
-      return {
+      const bill = {
         billNumber: billNumberElement.text().trim(),
         summary: $(summary).text().trim(),
         filedBy: $(filedBy).text().trim(),
         url: `${ROOT_PAGE}${billNumberElement.find('a')[0].attribs.href}`
       };
+      validatePotentialBill(bill);
+      return bill;
     })
     .get();
 }

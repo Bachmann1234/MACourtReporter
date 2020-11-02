@@ -1,5 +1,5 @@
 import { loadTextFixture } from '../fixtures/utils';
-import { findBillsInSearchPage } from '../../src/clients/malegislature';
+import { findBillsInSearchPage, validatePotentialBill } from '../../src/clients/malegislature';
 
 test('Extracts bills from the ma bill search page', () => {
   const page = loadTextFixture('searchPage.html');
@@ -168,4 +168,76 @@ test('Extracts bills from the ma bill search page', () => {
       url: 'https://malegislature.gov/Bills/191/H5058'
     }
   ]);
+});
+
+test('throws exceptions on invalid bills', () => {
+  expect(() =>
+    validatePotentialBill({
+      billNumber: '',
+      filedBy: 'Labor and Workforce Development (J)',
+      summary:
+        'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
+      url: 'https://malegislature.gov/Bills/191/H5086'
+    })
+  ).toThrow(Error);
+  expect(() =>
+    validatePotentialBill({
+      billNumber: 'H.5086',
+      filedBy: '',
+      summary:
+        'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
+      url: 'https://malegislature.gov/Bills/191/H5086'
+    })
+  ).toThrow(Error);
+  expect(() =>
+    validatePotentialBill({
+      billNumber: 'H.5086',
+      filedBy: 'Labor and Workforce Development (J)',
+      summary: '',
+      url: 'https://malegislature.gov/Bills/191/H5086'
+    })
+  ).toThrow(Error);
+  expect(() =>
+    validatePotentialBill({
+      billNumber: 'H.5086',
+      filedBy: 'Labor and Workforce Development (J)',
+      summary:
+        'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
+      url: ''
+    })
+  ).toThrow(Error);
+  expect(() =>
+    validatePotentialBill({
+      billNumber: 'H5086',
+      filedBy: 'Labor and Workforce Development (J)',
+      summary:
+        'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
+      url: 'https://malegislature.gov/Bills/191/H5086'
+    })
+  ).toThrowError();
+});
+
+test('Page that trigger bad extraction throws errors', () => {
+  expect(() => {
+    findBillsInSearchPage(`
+    <table id="searchTable">
+      <tbody>
+        <tr>
+          <td>
+          ds
+          </td>
+          <td>
+          <a href='/dog'></a>
+          </td>
+          <td>
+          Bob
+          </td>
+          <td>
+          I am kinda bill but where is my number
+          </td>
+        </tr>
+      </tbody>
+    </div>
+    `);
+  }).toThrowError();
 });
