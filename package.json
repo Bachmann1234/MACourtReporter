@@ -31,12 +31,15 @@
     "eslint-plugin-react": "^7.21.4",
     "eslint-plugin-react-hooks": "^4.1.2",
     "eslint-plugin-standard": "^4.0.1",
+    "husky": "^5.0.0-beta.0",
     "jest": "^26.5.3",
     "prettier": "^2.1.2",
     "ts-jest": "^26.4.1",
     "typescript": "^4.0.3"
   },
+  "private": true,
   "scripts": {
+    "postinstall": "husky install",
     "clean": "rm -r node_modules; rm -r dist",
     "format": "prettier --write --config .prettierrc '{test,src}/**/*.ts'",
     "build": "tsc; ./copyStaticFiles.sh",
