@@ -10,11 +10,11 @@ const logger = Pino();
 export type ScrapedBill = {
   billNumber: string;
   summary: string;
-  filedBy: String;
-  url: String;
+  filedBy: string;
+  url: string;
 };
 
-export function validatePotentialBill(bill: ScrapedBill) {
+export function validatePotentialBill(bill: ScrapedBill): void {
   if (
     !(
       bill.billNumber &&

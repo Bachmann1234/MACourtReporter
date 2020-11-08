@@ -1,61 +1,67 @@
 {
-  "name": "macourtreporter",
-  "version": "1.0.0",
-  "description": "Report on the activities of the MA General Court",
-  "main": "index.js",
-  "dependencies": {
-    "@types/cheerio": "^0.22.22",
-    "@types/node": "^14.11.8",
-    "@types/pino": "^6.3.2",
-    "axios": "^0.20.0",
-    "cheerio": "^1.0.0-rc.3",
-    "dotenv": "^8.2.0",
-    "pino": "^6.7.0"
-  },
-  "devDependencies": {
-    "@tsconfig/node14": "^1.0.0",
-    "@types/jest": "^26.0.14",
-    "@typescript-eslint/eslint-plugin": "^4.4.1",
-    "@typescript-eslint/eslint-plugin-tslint": "^4.4.1",
-    "@typescript-eslint/parser": "^4.5.0",
-    "eslint": "^7.11.0",
-    "eslint-config-airbnb-typescript": "^12.0.0",
-    "eslint-config-prettier": "^6.13.0",
-    "eslint-import-resolver-typescript": "^2.3.0",
-    "eslint-plugin-eslint-comments": "^3.2.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.1.0",
-    "eslint-plugin-jsx-a11y": "^6.3.1",
-    "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-react": "^7.21.4",
-    "eslint-plugin-react-hooks": "^4.1.2",
-    "eslint-plugin-standard": "^4.0.1",
-    "husky": "^5.0.0-beta.0",
-    "jest": "^26.5.3",
-    "prettier": "^2.1.2",
-    "ts-jest": "^26.4.1",
-    "typescript": "^4.0.3"
-  },
-  "private": true,
-  "scripts": {
-    "postinstall": "husky install",
-    "clean": "rm -r node_modules; rm -r dist",
-    "format": "prettier --write --config .prettierrc '{test,src}/**/*.ts'",
-    "build": "tsc; ./copyStaticFiles.sh",
-    "test": "jest",
-    "lint": "prettier --config .prettierrc '{test,src}/**/*.ts' --check; eslint .",
-    "queryBills": "npm run build && NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/queryRecentBills.js",
-    "coverage": "jest --coverage"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Bachmann1234/MACourtReporter.git"
-  },
-  "author": "Matt Bachmann",
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/Bachmann1234/MACourtReporter/issues"
-  },
-  "homepage": "https://github.com/Bachmann1234/MACourtReporter#readme"
+   "name": "macourtreporter",
+   "version": "1.0.0",
+   "description": "Report on the activities of the MA General Court",
+   "main": "index.js",
+   "dependencies": {
+      "@types/cheerio": "^0.22.22",
+      "@types/node": "^14.11.8",
+      "@types/pino": "^6.3.2",
+      "axios": "^0.20.0",
+      "cheerio": "^1.0.0-rc.3",
+      "dotenv": "^8.2.0",
+      "pg": "^8.4.0",
+      "pino": "^6.7.0",
+      "reflect-metadata": "^0.1.10",
+      "typeorm": "0.2.29"
+   },
+   "devDependencies": {
+      "@tsconfig/node14": "^1.0.0",
+      "@types/jest": "^26.0.14",
+      "@types/node": "^8.0.29",
+      "@typescript-eslint/eslint-plugin": "^4.4.1",
+      "@typescript-eslint/eslint-plugin-tslint": "^4.4.1",
+      "@typescript-eslint/parser": "^4.6.1",
+      "eslint": "^7.11.0",
+      "eslint-config-airbnb-typescript": "^12.0.0",
+      "eslint-config-prettier": "^6.13.0",
+      "eslint-import-resolver-typescript": "^2.3.0",
+      "eslint-plugin-eslint-comments": "^3.2.0",
+      "eslint-plugin-import": "^2.22.1",
+      "eslint-plugin-jest": "^24.1.0",
+      "eslint-plugin-jsx-a11y": "^6.3.1",
+      "eslint-plugin-prettier": "^3.1.4",
+      "eslint-plugin-promise": "^4.2.1",
+      "eslint-plugin-react": "^7.21.4",
+      "eslint-plugin-react-hooks": "^4.1.2",
+      "eslint-plugin-standard": "^4.0.1",
+      "husky": "^5.0.0-beta.0",
+      "jest": "^26.5.3",
+      "prettier": "^2.1.2",
+      "ts-jest": "^26.4.1",
+      "ts-node": "3.3.0",
+      "typescript": "^3.9.7"
+   },
+   "private": true,
+   "scripts": {
+      "postinstall": "husky install",
+      "clean": "rm -r node_modules; rm -r dist",
+      "format": "prettier --write --config .prettierrc '{test,src}/**/*.ts'",
+      "build": "tsc; ./copyStaticFiles.sh",
+      "test": "jest",
+      "lint": "prettier --config .prettierrc '{test,src}/**/*.ts' --check; eslint .",
+      "queryBills": "npm run build && NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/queryRecentBills.js",
+      "coverage": "jest --coverage",
+      "start": "ts-node src/index.ts"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/Bachmann1234/MACourtReporter.git"
+   },
+   "author": "Matt Bachmann",
+   "license": "GPL-3.0-or-later",
+   "bugs": {
+      "url": "https://github.com/Bachmann1234/MACourtReporter/issues"
+   },
+   "homepage": "https://github.com/Bachmann1234/MACourtReporter#readme"
 }

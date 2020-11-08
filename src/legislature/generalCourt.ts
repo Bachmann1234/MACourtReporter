@@ -10,10 +10,10 @@ export const maGeneralCourts: { [index: string]: GeneralCourt } = {
   }
 };
 
-export function getLegislature(number: number) {
+export function getLegislature(number: number): GeneralCourt {
   return maGeneralCourts[number.toString()];
 }
 
-export function getCurrentLegislature() {
+export function getCurrentLegislature(): GeneralCourt {
   return getLegislature(191);
 }

@@ -11,6 +11,8 @@
     "noFallthroughCasesInSwitch": true,
     "strict": true,
     "noUnusedLocals": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
     "baseUrl": "src",
     "paths": {
       "*": ["*"]

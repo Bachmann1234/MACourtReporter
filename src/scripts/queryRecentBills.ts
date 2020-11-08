@@ -1,7 +1,10 @@
 import Pino from 'pino';
+import 'reflect-metadata';
+import { config } from 'dotenv';
 import { getCurrentLegislature } from '../legislature/generalCourt';
 import { queryRecentBills } from '../clients/malegislature';
 
+config();
 const logger = Pino();
 
 logger.info(
