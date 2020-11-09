@@ -35,7 +35,6 @@
     "eslint-plugin-react": "^7.21.4",
     "eslint-plugin-react-hooks": "^4.1.2",
     "eslint-plugin-standard": "^4.0.1",
-    "husky": "^5.0.0-beta.0",
     "jest": "^26.5.3",
     "prettier": "^2.1.2",
     "ts-jest": "^26.4.1",
@@ -44,11 +43,11 @@
   },
   "private": true,
   "scripts": {
-    "postinstall": "husky install",
     "clean": "rm -r node_modules; rm -r dist",
     "format": "prettier --write --config .prettierrc '{test,src}/**/*.ts'",
     "build": "tsc; ./copyStaticFiles.sh",
     "test": "jest --coverage",
+    "ci": "npm run lint && npm run build && npm run test",
     "lint": "prettier --config .prettierrc '{test,src}/**/*.ts' --check; eslint .",
     "queryBills": "npm run build && NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/queryRecentBills.js",
     "updateBills": "npm run build && NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/updateBillsInDb.js"
