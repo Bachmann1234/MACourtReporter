@@ -42,29 +42,21 @@ async function saveBillsToDb(
   return billRepository.save(billsToSave);
 }
 
-logger.info(
-  `Updating database with Bills from MA General Court ${getCurrentLegislature().courtNumber}`
-);
-createConnection()
-  .then((connection) => {
-    queryRecentBills(getCurrentLegislature())
-      .then((scrapedBills) => {
-        return findNewBills(scrapedBills, connection);
-      })
-      .then((newScrapedBills) => {
-        if (!newScrapedBills.length) {
-          return [];
-        }
-        newScrapedBills.forEach((bill) => {
-          logger.info(
-            `${bill.billNumber}: ${bill.summary}. Filed by: ${bill.filedBy}. Learn more: ${bill.url}`
-          );
-        });
-        return saveBillsToDb(newScrapedBills, connection);
-      })
-      .then((savedBills) => {
-        connection.close();
-        logger.info(`Done! Saved ${savedBills.length} to the db`);
-      });
-  })
-  .catch((error) => logger.error(error));
+async function main(): Promise<void> {
+  logger.info(
+    `Updating database with Bills from MA General Court ${getCurrentLegislature().courtNumber}`
+  );
+  const connection = await createConnection();
+  const recentScrapedBills = await queryRecentBills(getCurrentLegislature());
+  const unsavedBills = await findNewBills(recentScrapedBills, connection);
+  unsavedBills.forEach((bill) => {
+    logger.info(
+      `${bill.billNumber}: ${bill.summary}. Filed by: ${bill.filedBy}. Learn more: ${bill.url}`
+    );
+  });
+  const savedBills = await saveBillsToDb(unsavedBills, connection);
+  connection.close();
+  logger.info(`Done! Saved ${savedBills.length} to the db`);
+}
+
+main().catch((error) => logger.error(error));
