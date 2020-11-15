@@ -1,7 +1,7 @@
 import Pino from 'pino';
 import 'reflect-metadata';
 import { config } from 'dotenv';
-import { createConnection, getConnection, Repository } from 'typeorm';
+import { getConnection, createConnection, Repository } from 'typeorm';
 import { getCurrentLegislature } from '../legislature/generalCourt';
 import { queryRecentBills, ScrapedBill } from '../clients/malegislature';
 import Bill from '../entity/Bill';
@@ -40,13 +40,16 @@ async function saveBillsToDb(
   return billRepository.save(billsToSave);
 }
 
-async function main(): Promise<void> {
+export default async function main(): Promise<void> {
   logger.info(
     `Updating database with Bills from MA General Court ${getCurrentLegislature().courtNumber}`
   );
-  const connection = await createConnection();
-  const billRepository = getConnection().getRepository(Bill);
   const recentScrapedBills = await queryRecentBills(getCurrentLegislature());
+  logger.info(`${recentScrapedBills.length}`)
+  if (!getConnection().isConnected) {
+    await createConnection();
+  }
+  const billRepository = getConnection().getRepository(Bill);
   const unsavedBills = await findNewBills(recentScrapedBills, billRepository);
   unsavedBills.forEach((bill) => {
     logger.info(
@@ -54,7 +57,7 @@ async function main(): Promise<void> {
     );
   });
   const savedBills = await saveBillsToDb(unsavedBills, billRepository);
-  connection.close();
+  getConnection().close();
   logger.info(`Done! Saved ${savedBills.length} to the db`);
 }
 
