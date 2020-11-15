@@ -25,14 +25,6 @@ async function findNewBills(
   return foundBills.filter((foundBill) => !existingBills.has(foundBill.billNumber));
 }
 
-async function saveBillsToDb(
-  newScrapedBills: ScrapedBill[],
-  billRepository: Repository<Bill>
-): Promise<Bill[]> {
-  const billsToSave = newScrapedBills.map(Bill.fromScrapedBill);
-  return billRepository.save(billsToSave);
-}
-
 export default async function main(): Promise<void> {
   logger.info(
     `Updating database with Bills from MA General Court ${getCurrentLegislature().courtNumber}`
@@ -47,7 +39,7 @@ export default async function main(): Promise<void> {
       `${bill.billNumber}: ${bill.summary}. Filed by: ${bill.filedBy}. Learn more: ${bill.url}`
     );
   });
-  const savedBills = await saveBillsToDb(unsavedBills, billRepository);
+  const savedBills = await billRepository.save(unsavedBills.map(Bill.fromScrapedBill));
   getConnection().close();
   logger.info(`Done! Saved ${savedBills.length} to the db`);
 }
