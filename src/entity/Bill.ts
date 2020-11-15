@@ -4,7 +4,7 @@ import { Entity, PrimaryGeneratedColumn, Column, Index, Unique } from 'typeorm';
 @Entity()
 @Unique(['billNumber'])
 export default class Bill {
-  static fromScrapedBill(scrapedBill: ScrapedBill) {
+  static fromScrapedBill(scrapedBill: ScrapedBill): Bill {
     const bill = new Bill();
     bill.billNumber = scrapedBill.billNumber;
     bill.filedBy = scrapedBill.filedBy;

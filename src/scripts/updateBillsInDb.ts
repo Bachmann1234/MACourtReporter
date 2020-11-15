@@ -39,9 +39,7 @@ export default async function main(): Promise<void> {
   );
   const recentScrapedBills = await queryRecentBills(getCurrentLegislature());
   logger.info(`${recentScrapedBills.length}`);
-  if (!getConnection().isConnected) {
-    await createConnection();
-  }
+  await createConnection();
   const billRepository = getConnection().getRepository(Bill);
   const unsavedBills = await findNewBills(recentScrapedBills, billRepository);
   unsavedBills.forEach((bill) => {
