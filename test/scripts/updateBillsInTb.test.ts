@@ -1,7 +1,35 @@
-import { mocked } from "ts-jest/utils";
-import main from "../../src/scripts/updateBillsInDb";
-import { queryRecentBills } from '../../src/clients/malegislature'
+import { mocked } from 'ts-jest/utils';
+import main from '../../src/scripts/updateBillsInDb';
+import { queryRecentBills } from '../../src/clients/malegislature';
+import Bill from '../../src/entity/Bill';
 
+const getManyMock = jest.fn();
+const saveMock = jest.fn();
+jest.mock('typeorm', () => {
+  return {
+    getConnection: () => {
+      return {
+        getRepository: () => {
+          return {
+            createQueryBuilder: jest.fn().mockReturnValue({
+              where: jest.fn().mockReturnThis(),
+              getMany: getManyMock.mockResolvedValue([])
+            }),
+            save: saveMock
+          };
+        },
+        close: () => jest.fn()
+      };
+    },
+    createConnection: () => jest.fn(),
+    Repository: () => jest.fn(),
+    Entity: () => jest.fn(),
+    PrimaryGeneratedColumn: () => jest.fn(),
+    Column: () => jest.fn(),
+    Index: () => jest.fn(),
+    Unique: () => jest.fn()
+  };
+});
 jest.mock('../../src/clients/malegislature', () => {
   return {
     queryRecentBills: jest.fn()
@@ -10,29 +38,30 @@ jest.mock('../../src/clients/malegislature', () => {
 
 describe('updateBillsInDb', () => {
   it('saves bills to the db', async () => {
-    mocked(queryRecentBills).mockResolvedValue(
-      [
-        {
-          billNumber: 'H.5086',
-          filedBy: 'Labor and Workforce Development (J)',
-          summary:
-            'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
-          url: 'https://malegislature.gov/Bills/191/H5086'
-        },
-        {
-          billNumber: 'H.5085',
-          filedBy: 'Labor and Workforce Development (J)',
-          summary: 'An Act requiring one fair wage',
-          url: 'https://malegislature.gov/Bills/191/H5085'
-        }
-      ]
-    )
-    try {
-       await main()
-    } catch {
-      // just fine
-    }
-    expect(mocked(queryRecentBills).mock.calls[0][0]).toEqual({courtNumber: 191, searchId: '3139317374202843757272656e7429'})
-    expect(4).toBe(7)
+    const scrapedBills = [
+      {
+        billNumber: 'H.5086',
+        filedBy: 'Labor and Workforce Development (J)',
+        summary:
+          'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
+        url: 'https://malegislature.gov/Bills/191/H5086'
+      },
+      {
+        billNumber: 'H.5085',
+        filedBy: 'Labor and Workforce Development (J)',
+        summary: 'An Act requiring one fair wage',
+        url: 'https://malegislature.gov/Bills/191/H5085'
+      }
+    ];
+    mocked(queryRecentBills).mockResolvedValue(scrapedBills);
+    saveMock.mockResolvedValue([new Bill(), new Bill()]);
+    await main();
+    expect(mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
+    expect(mocked(queryRecentBills)).toHaveBeenCalledWith({
+      courtNumber: 191,
+      searchId: '3139317374202843757272656e7429'
+    });
+    expect(saveMock).toHaveBeenCalledTimes(1);
+    expect(saveMock).toHaveBeenCalledWith(scrapedBills.map(Bill.fromScrapedBill));
   });
 });

@@ -29,14 +29,7 @@ async function saveBillsToDb(
   newScrapedBills: ScrapedBill[],
   billRepository: Repository<Bill>
 ): Promise<Bill[]> {
-  const billsToSave = newScrapedBills.map((newScrapedBill) => {
-    const bill = new Bill();
-    bill.billNumber = newScrapedBill.billNumber;
-    bill.filedBy = newScrapedBill.filedBy;
-    bill.url = newScrapedBill.url;
-    bill.summary = newScrapedBill.summary;
-    return bill;
-  });
+  const billsToSave = newScrapedBills.map(Bill.fromScrapedBill);
   return billRepository.save(billsToSave);
 }
 
@@ -45,7 +38,7 @@ export default async function main(): Promise<void> {
     `Updating database with Bills from MA General Court ${getCurrentLegislature().courtNumber}`
   );
   const recentScrapedBills = await queryRecentBills(getCurrentLegislature());
-  logger.info(`${recentScrapedBills.length}`)
+  logger.info(`${recentScrapedBills.length}`);
   if (!getConnection().isConnected) {
     await createConnection();
   }
