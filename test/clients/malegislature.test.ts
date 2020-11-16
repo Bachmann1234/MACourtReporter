@@ -182,7 +182,7 @@ test('throws exceptions on invalid bills', () => {
   ).toThrow(Error);
   expect(() =>
     validatePotentialBill({
-      billNumber: 'H.5086',
+      billNumber: '5086',
       filedBy: '',
       summary:
         'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
