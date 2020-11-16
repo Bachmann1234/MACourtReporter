@@ -27,7 +27,10 @@ jest.mock('typeorm', () => {
     PrimaryGeneratedColumn: () => jest.fn(),
     Column: () => jest.fn(),
     Index: () => jest.fn(),
-    Unique: () => jest.fn()
+    Unique: () => jest.fn(),
+    OneToOne: () => jest.fn(),
+    JoinColumn: () => jest.fn(),
+    CreateDateColumn: () => jest.fn()
   };
 });
 jest.mock('../../src/clients/malegislature', () => {

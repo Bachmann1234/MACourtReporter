@@ -1,5 +1,5 @@
 import { ScrapedBill } from 'clients/malegislature';
-import { Entity, PrimaryGeneratedColumn, Column, Index, Unique } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, Index, Unique, CreateDateColumn } from 'typeorm';
 
 @Entity()
 @Unique(['billNumber'])
@@ -15,6 +15,9 @@ export default class Bill {
 
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @CreateDateColumn()
+  created?: Date;
 
   @Index('billNumber-idx')
   @Column()
