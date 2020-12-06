@@ -16,7 +16,9 @@ export default class Tweet {
     const tweet = new Tweet();
     tweet.bill = bill;
     const spaceForTweet = MAX_TWEET_LENGTH - bill.url.length;
-    const proposedBody = `${bill.filedBy || 'Somebody'} filed: ${bill.summary}`;
+    const proposedBody = `${bill.filedBy || 'Somebody'} filed: ${bill.billNumber} - ${
+      bill.summary
+    }`;
     if (proposedBody.length > spaceForTweet) {
       tweet.body = `${proposedBody.substring(0, spaceForTweet - 4)}... ${bill.url}`;
     } else {
