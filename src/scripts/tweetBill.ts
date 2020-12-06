@@ -65,7 +65,12 @@ export default async function main(): Promise<void> {
       .where('tweet.id is NULL')
       .getMany()) || []
   ).sort((a, b) => {
-    return Number.parseInt(a.billNumber.slice(2), 10) - Number.parseInt(b.billNumber.slice(2), 10);
+    const aDigits = a.billNumber.match(/\d+/);
+    const bDigits = b.billNumber.match(/\d+/);
+    if (aDigits === null || bDigits === null) {
+      throw new Error(`Could not match bill numbers: ${a.billNumber} ${b.billNumber}`);
+    }
+    return Number.parseInt(aDigits[0], 10) - Number.parseInt(bDigits[0], 10);
   })[0];
   if (billToTweet) {
     logger.info(`Tweeting the bill!`);
