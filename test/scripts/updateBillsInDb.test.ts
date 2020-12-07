@@ -1,38 +1,15 @@
+/* eslint-disable eslint-comments/disable-enable-pair */
+/* eslint-disable import/first */
+/* eslint-disable import/order */
+// eslint-disable-next-line import/newline-after-import
+import { mockTypeORM } from '../utils/utils';
+const [getManyMock, saveMock] = mockTypeORM();
+
 import { mocked } from 'ts-jest/utils';
 import main from '../../src/scripts/updateBillsInDb';
 import { queryRecentBills } from '../../src/clients/malegislature';
 import Bill from '../../src/entity/Bill';
 
-const getManyMock = jest.fn();
-const saveMock = jest.fn();
-jest.mock('typeorm', () => {
-  return {
-    getConnection: () => {
-      return {
-        getRepository: () => {
-          return {
-            createQueryBuilder: jest.fn().mockReturnValue({
-              where: jest.fn().mockReturnThis(),
-              getMany: getManyMock
-            }),
-            save: saveMock
-          };
-        },
-        close: () => jest.fn()
-      };
-    },
-    createConnection: () => jest.fn(),
-    Repository: () => jest.fn(),
-    Entity: () => jest.fn(),
-    PrimaryGeneratedColumn: () => jest.fn(),
-    Column: () => jest.fn(),
-    Index: () => jest.fn(),
-    Unique: () => jest.fn(),
-    OneToOne: () => jest.fn(),
-    JoinColumn: () => jest.fn(),
-    CreateDateColumn: () => jest.fn()
-  };
-});
 jest.mock('../../src/clients/malegislature', () => {
   return {
     queryRecentBills: jest.fn()
