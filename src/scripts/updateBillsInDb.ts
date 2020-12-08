@@ -43,5 +43,6 @@ export default async function main(): Promise<void> {
   getConnection().close();
   logger.info(`Done! Saved ${savedBills.length} to the db`);
 }
-
-main().catch((error) => logger.error(error));
+if (require.main === module) {
+  main().catch((error) => logger.error(error));
+}

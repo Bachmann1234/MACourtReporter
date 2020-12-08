@@ -19,7 +19,7 @@ export function mockTypeORM(): [jest.Mock, jest.Mock] {
             return {
               createQueryBuilder: jest.fn().mockReturnValue({
                 where: jest.fn().mockReturnThis(),
-                leftJoinAndMappOne: jest.fn().mockReturnThis(),
+                leftJoinAndMapOne: jest.fn().mockReturnThis(),
                 getMany: getManyMock
               }),
               save: saveMock

@@ -2,12 +2,13 @@ import Pino from 'pino';
 import 'reflect-metadata';
 import { config } from 'dotenv';
 import { createConnection, getConnection } from 'typeorm';
-import Twit from 'twit';
+import Twit, { Response } from 'twit';
+import { IncomingMessage } from 'http';
 import Bill from '../entity/Bill';
 import Tweet from '../entity/Tweet';
 
 config();
-const logger = Pino();
+export const logger = Pino();
 
 type SuccessfulTwitterResponse = {
   id_str: string;
@@ -22,7 +23,23 @@ function isSuccessfulTwitterResponse(value: unknown): value is SuccessfulTwitter
   return false;
 }
 
-export async function tweetBill(tweet: Tweet): Promise<void> {
+export function handleTwitterResponse(
+  err: Error | null,
+  result: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  response: IncomingMessage
+): void {
+  if (err) {
+    throw new Error(`Failed to Tweet -- ${err}`);
+  }
+  if (isSuccessfulTwitterResponse(result)) {
+    logger.info(`tweet id: ${result.id_str} created_at: ${result.created_at} text: ${result.text}`);
+  } else {
+    logger.warn('Twitter response had an unexpected type');
+  }
+}
+
+async function tweetBill(tweet: Tweet): Promise<void> {
   if (
     !(
       process.env.TWITTER_API_KEY &&
@@ -41,16 +58,7 @@ export async function tweetBill(tweet: Tweet): Promise<void> {
     timeout_ms: 1000 * 60,
     strictSSL: true
   });
-  twit.post('statuses/update', { status: tweet.body }, (err, data) => {
-    if (err) {
-      throw new Error(`Failed to Tweet ${err}`);
-    }
-    if (isSuccessfulTwitterResponse(data)) {
-      logger.info(`tweet id: ${data.id_str} created_at: ${data.created_at} text: ${data.text}`);
-    } else {
-      logger.warn('Twitter response had an unexpected type');
-    }
-  });
+  twit.post('statuses/update', { status: tweet.body }, handleTwitterResponse);
 }
 
 export default async function main(): Promise<void> {
@@ -82,4 +90,6 @@ export default async function main(): Promise<void> {
   }
   logger.info('all done!');
 }
-main().catch((error) => logger.error(error));
+if (require.main === module) {
+  main().catch((error) => logger.error(error));
+}

@@ -1,4 +1,3 @@
-/* eslint-disable eslint-comments/disable-enable-pair */
 /* eslint-disable import/first */
 /* eslint-disable import/order */
 // eslint-disable-next-line import/newline-after-import
@@ -9,6 +8,8 @@ import { mocked } from 'ts-jest/utils';
 import main from '../../src/scripts/updateBillsInDb';
 import { queryRecentBills } from '../../src/clients/malegislature';
 import Bill from '../../src/entity/Bill';
+/* eslint-enable import/first */
+/* eslint-enable import/order */
 
 jest.mock('../../src/clients/malegislature', () => {
   return {
