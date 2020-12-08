@@ -10,7 +10,4 @@ script:
   - npm run build
   - npm run test
 env:
-  - TWITTER_API_KEY=fake
-  - TWITTER_API_KEY_SECRET=fake
-  - TWITTER_ACCESS_TOKEN=fake
-  - TWITTER_ACCESS_TOKEN_SECRET=fake
+  - TWITTER_API_KEY=fake TWITTER_API_KEY_SECRET=fake TWITTER_ACCESS_TOKEN=fake TWITTER_ACCESS_TOKEN_SECRET=fake
