@@ -51,8 +51,9 @@
     "test": "jest --coverage",
     "ci": "npm run lint && npm run build && npm run test",
     "lint": "prettier --config .prettierrc '{test,src}/**/*.ts' --check; eslint .",
-    "queryBills": "npm run build && NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/queryRecentBills.js",
-    "updateBills": "npm run build && NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/updateBillsInDb.js"
+    "queryBills": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/queryRecentBills.js",
+    "updateBills": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/updateBillsInDb.js",
+    "tweetBill": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/tweetBill.js"
   },
   "repository": {
     "type": "git",
