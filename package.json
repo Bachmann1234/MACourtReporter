@@ -63,5 +63,8 @@
   "bugs": {
     "url": "https://github.com/Bachmann1234/MACourtReporter/issues"
   },
-  "homepage": "https://github.com/Bachmann1234/MACourtReporter#readme"
+  "homepage": "https://github.com/Bachmann1234/MACourtReporter#readme",
+  "engines": {
+    "node": "15.x"
+  }
 }
