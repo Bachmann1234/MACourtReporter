@@ -18,3 +18,12 @@ I don't really have much of an agenda here. If I have any political agenda with 
 Turns out the MA General Court does not provide a complete certificate chain. Browsers can fill this gap for you but node does not. This cert is needed to properly authenticate the server as who they say they are (This answer explains the situation well while also providing a solution https://stackoverflow.com/a/60020493/1804512)
 
 However, I still have a lot to learn so if you are seeing this and have tips let me know
+
+# Social Media Avatars
+
+These represent the bots identity!
+
+![profile image](./avatar/profile.png)
+![background](./avatar/background.png)
+
+These social media were created on commission by [Winnie Gong](https://github.com/bossibly)
