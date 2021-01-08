@@ -7,6 +7,10 @@ export const maGeneralCourts: { [index: string]: GeneralCourt } = {
   '191': {
     courtNumber: 191,
     searchId: '3139317374202843757272656e7429'
+  },
+  '192': {
+    courtNumber: 192,
+    searchId: '3139326e64202843757272656e7429'
   }
 };
 
@@ -15,5 +19,5 @@ export function getLegislature(number: number): GeneralCourt {
 }
 
 export function getCurrentLegislature(): GeneralCourt {
-  return getLegislature(191);
+  return getLegislature(192);
 }

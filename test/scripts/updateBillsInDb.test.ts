@@ -41,8 +41,8 @@ describe('updateBillsInDb', () => {
     await main();
     expect(mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
     expect(mocked(queryRecentBills)).toHaveBeenCalledWith({
-      courtNumber: 191,
-      searchId: '3139317374202843757272656e7429'
+      courtNumber: 192,
+      searchId: '3139326e64202843757272656e7429'
     });
     expect(saveMock).toHaveBeenCalledTimes(1);
     expect(saveMock).toHaveBeenCalledWith(scrapedBills.map(Bill.fromScrapedBill));
@@ -54,8 +54,8 @@ describe('updateBillsInDb', () => {
     await main();
     expect(mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
     expect(mocked(queryRecentBills)).toHaveBeenCalledWith({
-      courtNumber: 191,
-      searchId: '3139317374202843757272656e7429'
+      courtNumber: 192,
+      searchId: '3139326e64202843757272656e7429'
     });
     expect(saveMock).toHaveBeenCalledTimes(1);
     expect(saveMock).toHaveBeenCalledWith([]);
