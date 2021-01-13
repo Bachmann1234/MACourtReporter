@@ -16,7 +16,9 @@ export type ScrapedBill = {
 
 export function validatePotentialBill(bill: ScrapedBill): void {
   // Apparently filedby can be null. Who woulda knew?
-  if (!(bill.billNumber && bill.summary && bill.url && bill.billNumber.match(/H|HD|SD|S\.\d+/g))) {
+  if (
+    !(bill.billNumber && bill.summary && bill.url && bill.billNumber.match(/(H|HD|SD|S)\.\d+/g))
+  ) {
     logger.error({ bill }, 'Extracted malformed bill');
     throw Error('Bill looks strange');
   }
