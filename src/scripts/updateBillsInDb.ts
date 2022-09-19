@@ -25,7 +25,7 @@ async function findNewBills(
   return foundBills.filter((foundBill) => !existingBills.has(foundBill.billNumber));
 }
 
-export default async function main(): Promise<void> {
+export default async function updateBillsInDb(): Promise<void> {
   logger.info(
     `Updating database with Bills from MA General Court ${getCurrentLegislature().courtNumber}`
   );
@@ -44,5 +44,5 @@ export default async function main(): Promise<void> {
   logger.info(`Done! Saved ${savedBills.length} to the db`);
 }
 if (require.main === module) {
-  main().catch((error) => logger.error(error));
+  updateBillsInDb().catch((error) => logger.error(error));
 }

@@ -5,7 +5,7 @@ import { mockTypeORM } from '../utils/utils';
 const [getManyMock, saveMock] = mockTypeORM();
 import Bill from '../../src/entity/Bill';
 import Tweet from '../../src/entity/Tweet';
-import main, {
+import runTweetTask, {
   handleTwitterResponse,
   logger as tweetBillLogger
 } from '../../src/scripts/tweetBill';
@@ -48,7 +48,7 @@ describe('tweetBill', () => {
     const tweet = Tweet.fromBill(bills[1]);
     getManyMock.mockResolvedValue(bills.slice());
     saveMock.mockResolvedValue([new Tweet()]);
-    await main();
+    await runTweetTask();
     expect(postMock).toHaveBeenCalledTimes(1);
     expect(postMock).toHaveBeenCalledWith(
       'statuses/update',

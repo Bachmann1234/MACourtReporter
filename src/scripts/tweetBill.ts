@@ -61,7 +61,7 @@ async function tweetBill(tweet: Tweet): Promise<void> {
   twit.post('statuses/update', { status: tweet.body }, handleTwitterResponse);
 }
 
-export default async function main(): Promise<void> {
+export default async function runTweetTask(): Promise<void> {
   logger.info(`Checking for bills to tweet!!`);
   await createConnection();
   const billRepository = getConnection().getRepository(Bill);
@@ -91,5 +91,5 @@ export default async function main(): Promise<void> {
   logger.info('all done!');
 }
 if (require.main === module) {
-  main().catch((error) => logger.error(error));
+  runTweetTask().catch((error) => logger.error(error));
 }

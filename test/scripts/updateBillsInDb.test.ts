@@ -5,9 +5,9 @@ import { mockTypeORM } from '../utils/utils';
 const [getManyMock, saveMock] = mockTypeORM();
 
 import { mocked } from 'ts-jest/utils';
-import main from '../../src/scripts/updateBillsInDb';
 import { queryRecentBills } from '../../src/clients/malegislature';
 import Bill from '../../src/entity/Bill';
+import updateBillsInDb from "../../src/scripts/updateBillsInDb";
 /* eslint-enable import/first */
 /* eslint-enable import/order */
 
@@ -38,7 +38,7 @@ describe('updateBillsInDb', () => {
     mocked(queryRecentBills).mockResolvedValue(scrapedBills);
     getManyMock.mockResolvedValue([]);
     saveMock.mockResolvedValue([new Bill(), new Bill()]); // The actual content does not matter. just throwing back empties
-    await main();
+    await updateBillsInDb();
     expect(mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
     expect(mocked(queryRecentBills)).toHaveBeenCalledWith({
       courtNumber: 192,
@@ -51,7 +51,7 @@ describe('updateBillsInDb', () => {
   it('ignores bills that have already been saved', async () => {
     mocked(queryRecentBills).mockResolvedValue(scrapedBills);
     getManyMock.mockResolvedValue(scrapedBills.map(Bill.fromScrapedBill));
-    await main();
+    await updateBillsInDb();
     expect(mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
     expect(mocked(queryRecentBills)).toHaveBeenCalledWith({
       courtNumber: 192,
