@@ -7,12 +7,13 @@ module.exports = {
     'prettier/@typescript-eslint',
     'plugin:jest/recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:eslint-comments/recommended'
+    'plugin:eslint-comments/recommended',
+    'plugin:import/recommended'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     project: './tsconfig.json'
   },
   ignorePatterns: ['migration'],
-  rules: {}
+  rules: {"react/jsx-filename-extension": "off"}
 };

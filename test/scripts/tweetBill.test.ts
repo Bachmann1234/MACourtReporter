@@ -69,11 +69,11 @@ describe('tweetBill', () => {
       .mockImplementation((message: string) => message);
     handleTwitterResponse(null, { id_str: '1', created_at: '2', text: 'tweet' }, msg);
     expect(infoSpy).toHaveBeenCalled();
-    expect(infoSpy).toBeCalledWith('tweet id: 1 created_at: 2 text: tweet');
+    expect(infoSpy).toHaveBeenCalledWith('tweet id: 1 created_at: 2 text: tweet');
     const warnSpy = jest
       .spyOn(tweetBillLogger, 'warn')
       .mockImplementation((message: string) => message);
     handleTwitterResponse(null, { created_at: '2', text: 'tweet' }, msg);
-    expect(warnSpy).toBeCalledWith('Twitter response had an unexpected type');
+    expect(warnSpy).toHaveBeenCalledWith('Twitter response had an unexpected type');
   });
 });

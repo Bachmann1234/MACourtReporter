@@ -7,7 +7,7 @@ const [getManyMock, saveMock] = mockTypeORM();
 import { mocked } from 'ts-jest/utils';
 import { queryRecentBills } from '../../src/clients/malegislature';
 import Bill from '../../src/entity/Bill';
-import updateBillsInDb from "../../src/scripts/updateBillsInDb";
+import updateBillsInDb from '../../src/scripts/updateBillsInDb';
 /* eslint-enable import/first */
 /* eslint-enable import/order */
 

@@ -214,7 +214,7 @@ test('throws exceptions on invalid bills', () => {
         'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
       url: 'https://malegislature.gov/Bills/191/H5086'
     })
-  ).toThrowError();
+  ).toThrow();
 });
 
 test('Page that trigger bad extraction throws errors', () => {
@@ -239,5 +239,5 @@ test('Page that trigger bad extraction throws errors', () => {
       </tbody>
     </div>
     `);
-  }).toThrowError();
+  }).toThrow();
 });
