@@ -25,7 +25,7 @@ app.post('/updateBills', (req: Request, res: Response) => {
       .catch((e) => {
         logger.error(e);
         res.status(500);
-        res.send('Failed to tweet bill');
+        res.send('Failed to update bills');
       });
   }
 });
