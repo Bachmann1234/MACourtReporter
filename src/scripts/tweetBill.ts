@@ -88,7 +88,7 @@ export default async function runTweetTask(): Promise<void> {
   } else {
     logger.info('No new bills!');
   }
-  await getConnection().close()
+  await getConnection().close();
   logger.info('all done!');
 }
 if (require.main === module) {
