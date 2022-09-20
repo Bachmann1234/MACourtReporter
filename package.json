@@ -55,7 +55,8 @@
     "lint": "prettier --config .prettierrc '{test,src}/**/*.ts' --check; eslint .",
     "queryBills": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/queryRecentBills.js",
     "updateBills": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/updateBillsInDb.js",
-    "tweetBill": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/tweetBill.js"
+    "tweetBill": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/tweetBill.js",
+    "server": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/server.js"
   },
   "repository": {
     "type": "git",

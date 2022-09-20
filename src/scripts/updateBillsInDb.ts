@@ -40,7 +40,7 @@ export default async function updateBillsInDb(): Promise<void> {
     );
   });
   const savedBills = await billRepository.save(unsavedBills.map(Bill.fromScrapedBill));
-  getConnection().close();
+  await getConnection().close();
   logger.info(`Done! Saved ${savedBills.length} to the db`);
 }
 if (require.main === module) {
