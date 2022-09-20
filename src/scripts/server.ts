@@ -16,7 +16,7 @@ app.get('/', (req: Request, res: Response) => {
 
 app.post('/updateBills', (req: Request, res: Response) => {
   const apiKey = req.header('apikey');
-  if (!process.env.API_KEY || process.env.PORT !== apiKey) {
+  if (!process.env.API_KEY || process.env.API_KEY !== apiKey) {
     res.status(403);
     res.send('Access Denied!');
   } else {
@@ -32,7 +32,7 @@ app.post('/updateBills', (req: Request, res: Response) => {
 
 app.post('/tweetBill', (req: Request, res: Response) => {
   const apiKey = req.header('apikey');
-  if (!process.env.API_KEY || process.env.PORT !== apiKey) {
+  if (!process.env.API_KEY || process.env.API_KEY !== apiKey) {
     res.status(403);
     res.send('Access Denied!');
   } else {
