@@ -41,3 +41,4 @@ export type Bill = typeof bills.$inferSelect;
 export type NewBill = typeof bills.$inferInsert;
 export type Post = typeof posts.$inferSelect;
 export type NewPost = typeof posts.$inferInsert;
+export type BillStatus = (typeof BILL_STATUSES)[number];

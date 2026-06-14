@@ -1,6 +1,6 @@
 # 008 — Run as a cron job; remove the Express server
 
-**Status:** TODO
+**Status:** DONE
 **Area:** infra
 **Size:** M
 **Depends on:** #007 (SQLite, so cron runs need no DB service), #012 (court-scoped

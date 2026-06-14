@@ -25,7 +25,7 @@ listed tickets in the order shown.
 - **Phase 5 — Deploy:** [012](./012-court-scoped-bill-identity.md) ->
   [008](./008-cron-not-server.md) ([009](./009-decommission-fly.md) already DONE).
   012 (per-court bill identity) goes first — 008's auto-seed/rollover logic
-  depends on it.
+  depends on it. *(DONE)*
 
 Coupled dependency removals ride with their feature ticket (decorators with 007,
 `twit` with 004, `express` with 008) — removing them upfront would break the
