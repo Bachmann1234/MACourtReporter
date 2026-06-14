@@ -32,7 +32,8 @@
     "db:migrate": "node ./dist/src/db/migrate.js",
     "queryBills": "node ./dist/src/scripts/queryRecentBills.js",
     "updateBills": "node ./dist/src/scripts/updateBillsInDb.js",
-    "postBill": "node ./dist/src/scripts/postBill.js"
+    "postBill": "node ./dist/src/scripts/postBill.js",
+    "queueStatus": "node ./dist/src/scripts/queueStatus.js"
   },
   "repository": {
     "type": "git",

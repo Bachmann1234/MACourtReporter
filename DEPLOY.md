@@ -96,8 +96,10 @@ step 2):
 
 - Scraping hourly is deliberate overkill — page 1 of the site barely moves, so
   there's ample margin and no pagination is ever needed.
-- Posting drains one bill every 2 hours (12/day), which keeps up with the ~2–4
-  new bills/day the 194th files in steady state.
+- Posting drains one bill every 2 hours (12/day). Each scrape now merges both
+  chambers (House + Senate, see ticket 013), so steady-state inflow is a few
+  bills/day across both — still under 12/day. Bursty filing days can outrun it;
+  watch `npm run queueStatus` (see Operating notes).
 - The scripts read `.env` via `dotenv`, so cron's bare environment is fine as
   long as `.env` lives in the repo root (the `cd` ensures it's found).
 
@@ -106,14 +108,20 @@ step 2):
 - **Logs:** everything goes to `~/macourtreporter.log`. The events most worth
   watching are the flood-guard warning and zero-results warnings. Add logrotate
   if it grows.
+- **Check the post queue:** `npm run queueStatus` (read-only) prints how many
+  bills are waiting to post (`NEW`), split by House/Senate, plus the oldest one
+  (what posts next). Posting drains only one bill per 2h, so if this total keeps
+  climbing run-over-run the queue isn't keeping up — tighten the post cron from
+  `0 */2` to `0 *` (hourly). See [ticket 013](./tickets/013-senate-coverage.md).
 - **Backups:** the SQLite file under `data/` is re-scrapable local state, so
   backups are optional — an occasional `sqlite3 data/macourtreporter.db ".backup
   /path/to/backup.db"` or file copy is enough.
 - **Upgrades:** `git pull && npm ci && npm run build`. Re-run `npm run db:migrate`
   if new migrations landed under `drizzle/`.
 
-## Known gap
+## Senate coverage
 
-The bot does **not** post Senate bills: the site search sorts by bill number
-descending and House numbers dwarf Senate, so the page-1 scrape is House-only.
-Confirmed and tracked in [ticket 013](./tickets/013-senate-coverage.md).
+Earlier the bot posted **no Senate bills**: the site search sorts by bill number
+descending and House numbers dwarf Senate, so a single page-1 scrape was
+House-only. Fixed in [ticket 013](./tickets/013-senate-coverage.md) — the scrape
+now runs once per chamber (refined by `lawsbranchname`) and merges the results.
