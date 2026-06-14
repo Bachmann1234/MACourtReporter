@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import express, { type Request, type Response } from 'express';
 import Pino from 'pino';
-import runTweetTask from './tweetBill';
+import runPostTask from './postBill';
 import updateBillsInDb from './updateBillsInDb';
 
 config({ quiet: true });
@@ -30,18 +30,18 @@ app.post('/updateBills', (req: Request, res: Response) => {
   }
 });
 
-app.post('/tweetBill', (req: Request, res: Response) => {
+app.post('/postBill', (req: Request, res: Response) => {
   const apiKey = req.header('apikey');
   if (!process.env.API_KEY || process.env.API_KEY !== apiKey) {
     res.status(403);
     res.send('Access Denied!');
   } else {
-    runTweetTask()
+    runPostTask()
       .then(() => res.send('Done!'))
       .catch((e) => {
         logger.error(e);
         res.status(500);
-        res.send('Failed to tweet bill');
+        res.send('Failed to post bill');
       });
   }
 });

@@ -24,19 +24,16 @@ test('Can handle a bill with no filer', () => {
   );
 });
 
-test('Will shorten summary if its too long', () => {
+test('Will shorten an over-long summary to fit the 300-grapheme limit', () => {
   const bill: ComposableBill = {
-    summary: `I am a tweet its a tweet and its amazing. Look at me while I type out the entire tweet.
-    Wow they really allow tweets to be long I wonder if I even need this tweet shortening
-    code it sure seems like I dont based on the data I have seen up to this point.
-    I dont know though, maybe I will?`,
+    summary: `An Act ${'relative to municipal governance and public accountability '.repeat(10)}`,
     filedBy: 'Bach',
     billNumber: 'H.1201',
-    url: 'https://example.com'
+    url: 'https://malegislature.gov/Bills/194/H1201'
   };
-  expect(composePostText(bill)).toEqual(
-    `Bach filed: H.1201 - I am a tweet its a tweet and its amazing. Look at me while I type out the entire tweet.
-    Wow they really allow tweets to be long I wonder if I even need this tweet shortening
-    code it sure seems like I dont based on the da... https://example.com #mapoli`
-  );
+  const text = composePostText(bill);
+  // ASCII text, so string length equals the grapheme count Bluesky enforces.
+  expect(text.length).toBeLessThanOrEqual(300);
+  expect(text.startsWith('Bach filed: H.1201 - An Act relative to municipal')).toBe(true);
+  expect(text.endsWith('... https://malegislature.gov/Bills/194/H1201 #mapoli')).toBe(true);
 });

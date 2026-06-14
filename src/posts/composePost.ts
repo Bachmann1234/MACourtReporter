@@ -1,7 +1,10 @@
-// Composes the text of a post from a bill. Length math and the move to
-// Bluesky's 300-grapheme limit are revisited in ticket #010; this preserves the
-// existing deterministic formatting unchanged.
-const MAX_POST_LENGTH = 280;
+// Composes the text of a post from a bill. Ticket #010 decided on the
+// deterministic format (the official bill title is the source of truth — no LLM
+// paraphrase for a civic bot). Bluesky allows 300 graphemes; the bill URL is
+// shown in full (Bluesky does not shorten links) and counts toward the limit, so
+// we reserve its full length. Bill text is ASCII, so JS string length equals the
+// grapheme count here; postBill still relies on RichText if that ever changes.
+const MAX_POST_LENGTH = 300;
 const MA_POLI_HASH = '#mapoli';
 
 export type ComposableBill = {

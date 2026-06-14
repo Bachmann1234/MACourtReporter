@@ -1,6 +1,6 @@
 # 004 — Replace Twitter posting with Bluesky
 
-**Status:** TODO
+**Status:** DONE
 **Area:** posting
 **Size:** M
 
@@ -57,7 +57,18 @@ post rows:
   [#010](./010-post-composition.md) (tweak deterministic formatting vs. have
   Haiku summarize).
 
-## Open questions (for discussion)
-1. Length accounting — graphemes vs JS string length; the URL facet uses the
-   full URL length. Need to recompute the truncation math (now in `Post`).
-   *(Tightly related to #010 — the composition strategy determines the math.)*
+## Resolved
+1. Length accounting — resolved with #010 (option A, deterministic). The bill URL
+   is shown in full and counts toward the 300-grapheme limit, so `composePostText`
+   reserves its full length. Bill text is ASCII, so JS string length equals the
+   grapheme count; `postBill` still routes text through `RichText` for facets, so
+   we have the grapheme helper on hand if non-ASCII ever appears.
+
+## Outcome
+- `src/scripts/tweetBill.ts` -> `src/scripts/postBill.ts` (`runTweetTask` ->
+  `runPostTask`); test renamed to `test/scripts/postBill.test.ts`.
+- `twit` + `@types/twit` removed; `@atproto/api` added. Auth via `BLUESKY_HANDLE`
+  + `BLUESKY_APP_PASSWORD`. `RichText.detectFacets` generates link facets.
+- The returned at:// URI is now stored in `post.uri`.
+- `npm run tweetBill` -> `npm run postBill`; `server.ts` route `/tweetBill` ->
+  `/postBill`; `verify.yaml` env `TWITTER_*` -> `BLUESKY_*`.

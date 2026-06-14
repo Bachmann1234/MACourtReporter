@@ -1,19 +1,27 @@
-import { IncomingMessage } from 'node:http';
-import { Socket } from 'node:net';
 import type { DB } from '../../src/db';
 import { bills, posts } from '../../src/db/schema';
 import { composePostText } from '../../src/posts/composePost';
-import runTweetTask, {
-  handleTwitterResponse,
-  logger as tweetBillLogger
-} from '../../src/scripts/tweetBill';
+import runPostTask from '../../src/scripts/postBill';
 import createTestDb from '../utils/testDb';
 
-const { postMock } = vi.hoisted(() => ({ postMock: vi.fn() }));
+const { loginMock, postMock, detectFacetsMock } = vi.hoisted(() => ({
+  loginMock: vi.fn(),
+  postMock: vi.fn(),
+  detectFacetsMock: vi.fn()
+}));
 
-vi.mock('twit', () => ({
-  default: class {
+vi.mock('@atproto/api', () => ({
+  AtpAgent: class {
+    login = loginMock;
     post = postMock;
+  },
+  RichText: class {
+    text: string;
+    facets = undefined;
+    detectFacets = detectFacetsMock;
+    constructor({ text }: { text: string }) {
+      this.text = text;
+    }
   }
 }));
 
@@ -33,12 +41,12 @@ const scrapedBills = [
   }
 ];
 
-const TWITTER_ENV = {
-  TWITTER_API_KEY: 'key',
-  TWITTER_API_KEY_SECRET: 'key-secret',
-  TWITTER_ACCESS_TOKEN: 'token',
-  TWITTER_ACCESS_TOKEN_SECRET: 'token-secret'
+const BLUESKY_ENV = {
+  BLUESKY_HANDLE: 'bot.bsky.social',
+  BLUESKY_APP_PASSWORD: 'app-pass'
 };
+
+const POST_URI = 'at://did:plc:abc123/app.bsky.feed.post/xyz789';
 
 let db: DB;
 
@@ -47,26 +55,27 @@ beforeEach(() => {
   db.insert(bills)
     .values(scrapedBills.map((b) => ({ ...b, status: 'NEW' as const })))
     .run();
-  postMock.mockReset();
-  Object.assign(process.env, TWITTER_ENV);
+  postMock.mockResolvedValue({ uri: POST_URI, cid: 'cid123' });
+  Object.assign(process.env, BLUESKY_ENV);
 });
 
-describe('tweetBill', () => {
-  it('should tweet the oldest bill, record the post, and mark it POSTED', async () => {
+describe('postBill', () => {
+  it('should post the oldest bill to Bluesky, record it with its uri, and mark it POSTED', async () => {
     // H.5085 is the lower number, so it is the oldest and goes first.
     const expectedText = composePostText(scrapedBills[1]);
-    await runTweetTask(db);
+    await runPostTask(db);
 
+    expect(loginMock).toHaveBeenCalledWith({
+      identifier: 'bot.bsky.social',
+      password: 'app-pass'
+    });
     expect(postMock).toHaveBeenCalledTimes(1);
-    expect(postMock).toHaveBeenCalledWith(
-      'statuses/update',
-      { status: expectedText },
-      handleTwitterResponse
-    );
+    expect(postMock.mock.calls[0][0].text).toBe(expectedText);
 
     const savedPosts = db.select().from(posts).all();
     expect(savedPosts).toHaveLength(1);
     expect(savedPosts[0].text).toBe(expectedText);
+    expect(savedPosts[0].uri).toBe(POST_URI);
 
     const postedBill = db
       .select()
@@ -79,22 +88,16 @@ describe('tweetBill', () => {
 
   it('should do nothing when there are no NEW bills', async () => {
     db.update(bills).set({ status: 'POSTED' }).run();
-    await runTweetTask(db);
+    await runPostTask(db);
     expect(postMock).not.toHaveBeenCalled();
     expect(db.select().from(posts).all()).toHaveLength(0);
   });
 
-  it('should handle twitter responses', () => {
-    const msg = new IncomingMessage(new Socket());
-    expect(() => {
-      handleTwitterResponse(new Error('OMG'), {}, msg);
-    }).toThrow(new Error('Failed to Tweet -- Error: OMG'));
-    const infoSpy = vi.spyOn(tweetBillLogger, 'info').mockImplementation(() => undefined);
-    handleTwitterResponse(null, { id_str: '1', created_at: '2', text: 'tweet' }, msg);
-    expect(infoSpy).toHaveBeenCalled();
-    expect(infoSpy).toHaveBeenCalledWith('tweet id: 1 created_at: 2 text: tweet');
-    const warnSpy = vi.spyOn(tweetBillLogger, 'warn').mockImplementation(() => undefined);
-    handleTwitterResponse(null, { created_at: '2', text: 'tweet' }, msg);
-    expect(warnSpy).toHaveBeenCalledWith('Twitter response had an unexpected type');
+  it('throws when Bluesky credentials are missing', async () => {
+    process.env.BLUESKY_HANDLE = '';
+    process.env.BLUESKY_APP_PASSWORD = '';
+    await expect(runPostTask(db)).rejects.toThrow('Bluesky credentials not defined in environment');
+    expect(postMock).not.toHaveBeenCalled();
+    expect(db.select().from(posts).all()).toHaveLength(0);
   });
 });

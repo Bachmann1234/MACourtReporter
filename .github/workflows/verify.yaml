@@ -18,7 +18,5 @@ jobs:
       - run: npm run build
       - run: npm run test
         env:
-          TWITTER_API_KEY: fake
-          TWITTER_API_KEY_SECRET: fake
-          TWITTER_ACCESS_TOKEN: fake
-          TWITTER_ACCESS_TOKEN_SECRET: fake
+          BLUESKY_HANDLE: fake
+          BLUESKY_APP_PASSWORD: fake

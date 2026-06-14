@@ -1,6 +1,6 @@
 # 010 — Post text composition: deterministic vs. Haiku summary
 
-**Status:** TODO (decision needed)
+**Status:** DONE (decided: A)
 **Area:** posting
 **Size:** S (deterministic) / M (LLM)
 **Related:** #004 (posting), #003 (summary now = official bill title)
@@ -41,5 +41,8 @@ to limit hallucination, and/or always include the bill URL so readers can verify
   scope for now; note for B.
 
 ## Decision
-- [ ] A (deterministic) — _default_
-- [ ] B (Haiku) — _enhancement, revisit after revival_
+- [x] A (deterministic) — **chosen (June 2026).** For a civic bot the official
+  bill title is the safer source of truth; deterministic, free, no failure mode.
+  `MAX_POST_LENGTH` bumped 280 -> 300 for Bluesky.
+- [ ] B (Haiku) — _enhancement, revisit after revival; keep A as the guaranteed
+  fallback and constrain Haiku to compress the title, not reinterpret the bill._
