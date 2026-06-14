@@ -1,12 +1,10 @@
 import { config } from 'dotenv';
 import { eq } from 'drizzle-orm';
-import Pino from 'pino';
 import { type DB, getDb } from '../db';
 import { compareByBillNumberAsc } from '../db/billOrder';
 import { type Bill, bills } from '../db/schema';
 
 config({ quiet: true });
-const logger = Pino();
 
 // The post task (postBill.ts) drains bills in status NEW, oldest first, across
 // every court — so the "queue" is exactly the set of NEW bills. This script is a
@@ -42,18 +40,32 @@ export function getQueueStatus(db: DB = getDb()): QueueStatus {
 
 export default function reportQueueStatus(db: DB = getDb()): QueueStatus {
   const status = getQueueStatus(db);
-  logger.info(
-    { byChamber: status.byChamber },
-    `${status.total} bill(s) queued to post (NEW): ` +
-      `${status.byChamber.House} House, ${status.byChamber.Senate} Senate`
-  );
-  if (status.oldest) {
-    logger.info(
-      `Next up (oldest NEW): ${status.oldest.billNumber} — ${status.oldest.summary} (${status.oldest.url})`
-    );
-  } else {
-    logger.info('Queue is empty — nothing waiting to post.');
+  const { House, Senate, Other } = status.byChamber;
+
+  const lines = [
+    'Post queue (bills in status NEW)',
+    '────────────────────────────────',
+    `  Total queued:  ${status.total}`,
+    `  House:         ${House}`,
+    `  Senate:        ${Senate}`
+  ];
+  // Only mention "Other" when it's non-zero — normally every bill is H or S, so
+  // a zero line is just noise.
+  if (Other > 0) {
+    lines.push(`  Other:         ${Other}`);
   }
+  lines.push('');
+
+  if (status.oldest) {
+    // postBill.ts drains oldest-first, so this is literally the next post.
+    lines.push('Next up:');
+    lines.push(`  ${status.oldest.billNumber} — ${status.oldest.summary}`);
+    lines.push(`  ${status.oldest.url}`);
+  } else {
+    lines.push('Queue is empty — nothing waiting to post.');
+  }
+
+  console.log(lines.join('\n'));
   return status;
 }
 
