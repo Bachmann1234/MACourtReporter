@@ -1,6 +1,6 @@
 # 007 — Data layer: Drizzle + better-sqlite3 (replaces Postgres/TypeORM)
 
-**Status:** TODO
+**Status:** DONE
 **Area:** persistence / infra
 **Size:** M
 **Note:** We drop TypeORM entirely here rather than upgrading it.

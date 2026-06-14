@@ -1,3 +1,6 @@
+# Local SQLite database (re-scrapable state, not source)
+data/
+
 # Logs
 logs
 *.log

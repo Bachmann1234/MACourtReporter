@@ -9,9 +9,7 @@
     "noFallthroughCasesInSwitch": true,
     "strict": true,
     "strictNullChecks": true,
-    "noUnusedLocals": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true
+    "noUnusedLocals": true
   },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "**/*.spec.ts"]

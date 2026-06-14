@@ -4,21 +4,22 @@
   "description": "Report on the activities of the MA General Court",
   "dependencies": {
     "@types/twit": "^2.2.28",
+    "better-sqlite3": "^12.10.1",
     "cheerio": "^1.2.0",
     "dotenv": "^17.4.2",
+    "drizzle-orm": "^0.45.2",
     "express": "^4.18.1",
-    "pg": "^8.4.0",
     "pino": "^10.3.1",
-    "reflect-metadata": "^0.1.10",
-    "twit": "^2.2.11",
-    "typeorm": "0.2.29"
+    "twit": "^2.2.11"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
     "@tsconfig/node22": "^22.0.5",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/express": "^4.17.14",
     "@types/node": "^22.19.21",
     "@vitest/coverage-v8": "^4.1.8",
+    "drizzle-kit": "^0.31.10",
     "typescript": "^6.0.3",
     "vitest": "^4.1.8"
   },
@@ -30,6 +31,8 @@
     "test": "vitest run --coverage",
     "ci": "npm run lint && npm run build && npm run test",
     "lint": "biome check .",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node ./dist/src/db/migrate.js",
     "queryBills": "node ./dist/src/scripts/queryRecentBills.js",
     "updateBills": "node ./dist/src/scripts/updateBillsInDb.js",
     "tweetBill": "node ./dist/src/scripts/tweetBill.js",

@@ -1,11 +1,11 @@
-import Pino from 'pino';
-import 'reflect-metadata';
 import type { IncomingMessage } from 'node:http';
 import { config } from 'dotenv';
+import { eq } from 'drizzle-orm';
+import Pino from 'pino';
 import Twit, { type Response } from 'twit';
-import { createConnection, getConnection } from 'typeorm';
-import Bill from '../entity/Bill';
-import Tweet from '../entity/Tweet';
+import { type DB, getDb } from '../db';
+import { type Bill, bills, posts } from '../db/schema';
+import { composePostText } from '../posts/composePost';
 
 config({ quiet: true });
 export const logger = Pino();
@@ -38,7 +38,7 @@ export function handleTwitterResponse(
   }
 }
 
-async function tweetBill(tweet: Tweet): Promise<void> {
+async function tweetBill(text: string): Promise<void> {
   if (
     !(
       process.env.TWITTER_API_KEY &&
@@ -57,37 +57,37 @@ async function tweetBill(tweet: Tweet): Promise<void> {
     timeout_ms: 1000 * 60,
     strictSSL: true
   });
-  twit.post('statuses/update', { status: tweet.body }, handleTwitterResponse);
+  twit.post('statuses/update', { status: text }, handleTwitterResponse);
 }
 
-export default async function runTweetTask(): Promise<void> {
+function oldestNewBill(db: DB): Bill | undefined {
+  return db
+    .select()
+    .from(bills)
+    .where(eq(bills.status, 'NEW'))
+    .all()
+    .sort((a, b) => {
+      const aDigits = a.billNumber.match(/\d+/);
+      const bDigits = b.billNumber.match(/\d+/);
+      if (aDigits === null || bDigits === null) {
+        throw new Error(`Could not match bill numbers: ${a.billNumber} ${b.billNumber}`);
+      }
+      return Number.parseInt(aDigits[0], 10) - Number.parseInt(bDigits[0], 10);
+    })[0];
+}
+
+export default async function runTweetTask(db: DB = getDb()): Promise<void> {
   logger.info(`Checking for bills to tweet!!`);
-  await createConnection();
-  const billRepository = getConnection().getRepository(Bill);
-  const tweetRepository = getConnection().getRepository(Tweet);
-  const billToTweet = (
-    (await billRepository
-      .createQueryBuilder('bill')
-      .leftJoinAndMapOne('tweet', 'tweet', 'tweet', 'tweet.billId = bill.id')
-      .where('tweet.id is NULL')
-      .getMany()) || []
-  ).sort((a, b) => {
-    const aDigits = a.billNumber.match(/\d+/);
-    const bDigits = b.billNumber.match(/\d+/);
-    if (aDigits === null || bDigits === null) {
-      throw new Error(`Could not match bill numbers: ${a.billNumber} ${b.billNumber}`);
-    }
-    return Number.parseInt(aDigits[0], 10) - Number.parseInt(bDigits[0], 10);
-  })[0];
+  const billToTweet = oldestNewBill(db);
   if (billToTweet) {
     logger.info(`Tweeting the bill!`);
-    const tweet = Tweet.fromBill(billToTweet);
-    await tweetBill(tweet);
-    await tweetRepository.save(tweet);
+    const text = composePostText(billToTweet);
+    await tweetBill(text);
+    db.insert(posts).values({ billId: billToTweet.id, text }).run();
+    db.update(bills).set({ status: 'POSTED' }).where(eq(bills.id, billToTweet.id)).run();
   } else {
     logger.info('No new bills!');
   }
-  await getConnection().close();
   logger.info('all done!');
 }
 if (require.main === module) {

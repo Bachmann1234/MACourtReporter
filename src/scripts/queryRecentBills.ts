@@ -1,6 +1,5 @@
-import Pino from 'pino';
-import 'reflect-metadata';
 import { config } from 'dotenv';
+import Pino from 'pino';
 import { queryRecentBills } from '../clients/malegislature';
 import { getCurrentLegislature } from '../legislature/generalCourt';
 

@@ -1,47 +1,56 @@
-import Pino from 'pino';
-import 'reflect-metadata';
 import { config } from 'dotenv';
-import { createConnection, getConnection, type Repository } from 'typeorm';
+import { inArray } from 'drizzle-orm';
+import Pino from 'pino';
 import { queryRecentBills, type ScrapedBill } from '../clients/malegislature';
-import Bill from '../entity/Bill';
+import { type DB, getDb } from '../db';
+import { bills, type NewBill } from '../db/schema';
 import { getCurrentLegislature } from '../legislature/generalCourt';
 
 config({ quiet: true });
 const logger = Pino();
 
-async function findNewBills(
-  foundBills: ScrapedBill[],
-  billRepository: Repository<Bill>
-): Promise<ScrapedBill[]> {
+function toNewBill(scraped: ScrapedBill): NewBill {
+  return {
+    billNumber: scraped.billNumber,
+    filedBy: scraped.filedBy,
+    summary: scraped.summary,
+    url: scraped.url,
+    status: 'NEW'
+  };
+}
+
+function findNewBills(foundBills: ScrapedBill[], db: DB): ScrapedBill[] {
+  if (foundBills.length === 0) {
+    return [];
+  }
   const scrapedBillNumbers = foundBills.map((b) => b.billNumber);
   const existingBills = new Set(
-    Array.from(
-      await billRepository
-        .createQueryBuilder('bill')
-        .where('bill.billNumber IN (:...scrapedBillNumbers)', { scrapedBillNumbers })
-        .getMany()
-    ).map((bill) => bill.billNumber)
+    db
+      .select({ billNumber: bills.billNumber })
+      .from(bills)
+      .where(inArray(bills.billNumber, scrapedBillNumbers))
+      .all()
+      .map((bill) => bill.billNumber)
   );
   return foundBills.filter((foundBill) => !existingBills.has(foundBill.billNumber));
 }
 
-export default async function updateBillsInDb(): Promise<void> {
+export default async function updateBillsInDb(db: DB = getDb()): Promise<void> {
   logger.info(
     `Updating database with Bills from MA General Court ${getCurrentLegislature().courtNumber}`
   );
   const recentScrapedBills = await queryRecentBills(getCurrentLegislature());
   logger.info(`${recentScrapedBills.length}`);
-  await createConnection();
-  const billRepository = getConnection().getRepository(Bill);
-  const unsavedBills = await findNewBills(recentScrapedBills, billRepository);
+  const unsavedBills = findNewBills(recentScrapedBills, db);
   unsavedBills.forEach((bill) => {
     logger.info(
       `${bill.billNumber}: ${bill.summary}. Filed by: ${bill.filedBy}. Learn more: ${bill.url}`
     );
   });
-  const savedBills = await billRepository.save(unsavedBills.map(Bill.fromScrapedBill));
-  await getConnection().close();
-  logger.info(`Done! Saved ${savedBills.length} to the db`);
+  if (unsavedBills.length > 0) {
+    db.insert(bills).values(unsavedBills.map(toNewBill)).run();
+  }
+  logger.info(`Done! Saved ${unsavedBills.length} to the db`);
 }
 if (require.main === module) {
   updateBillsInDb().catch((error) => logger.error(error));
