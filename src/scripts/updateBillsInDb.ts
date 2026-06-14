@@ -1,12 +1,12 @@
 import Pino from 'pino';
 import 'reflect-metadata';
 import { config } from 'dotenv';
-import { getConnection, createConnection, Repository } from 'typeorm';
-import { getCurrentLegislature } from '../legislature/generalCourt';
-import { queryRecentBills, ScrapedBill } from '../clients/malegislature';
+import { createConnection, getConnection, type Repository } from 'typeorm';
+import { queryRecentBills, type ScrapedBill } from '../clients/malegislature';
 import Bill from '../entity/Bill';
+import { getCurrentLegislature } from '../legislature/generalCourt';
 
-config();
+config({ quiet: true });
 const logger = Pino();
 
 async function findNewBills(

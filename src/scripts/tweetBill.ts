@@ -1,13 +1,13 @@
 import Pino from 'pino';
 import 'reflect-metadata';
+import type { IncomingMessage } from 'node:http';
 import { config } from 'dotenv';
+import Twit, { type Response } from 'twit';
 import { createConnection, getConnection } from 'typeorm';
-import Twit, { Response } from 'twit';
-import { IncomingMessage } from 'http';
 import Bill from '../entity/Bill';
 import Tweet from '../entity/Tweet';
 
-config();
+config({ quiet: true });
 export const logger = Pino();
 
 type SuccessfulTwitterResponse = {
@@ -26,8 +26,7 @@ function isSuccessfulTwitterResponse(value: unknown): value is SuccessfulTwitter
 export function handleTwitterResponse(
   err: Error | null,
   result: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  response: IncomingMessage
+  _response: IncomingMessage
 ): void {
   if (err) {
     throw new Error(`Failed to Tweet -- ${err}`);

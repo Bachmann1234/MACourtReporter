@@ -1,5 +1,5 @@
-import loadTextFixture from '../utils/utils';
 import { findBillsInSearchPage, validatePotentialBill } from '../../src/clients/malegislature';
+import loadTextFixture from '../utils/utils';
 
 test('Extracts bills from the ma bill search page', () => {
   const page = loadTextFixture('searchPage.html');

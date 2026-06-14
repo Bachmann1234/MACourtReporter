@@ -1,16 +1,16 @@
-import express, { Request, Response } from 'express';
-import runTweetTask from './tweetBill';
-import Pino from 'pino';
 import { config } from 'dotenv';
+import express, { type Request, type Response } from 'express';
+import Pino from 'pino';
+import runTweetTask from './tweetBill';
 import updateBillsInDb from './updateBillsInDb';
 
-config();
+config({ quiet: true });
 
 const app = express();
 const port = 8080;
 const logger = Pino();
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.send('Hello!');
 });
 

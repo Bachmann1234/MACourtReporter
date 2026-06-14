@@ -1,25 +1,57 @@
-/* eslint-disable import/first */
-/* eslint-disable import/order */
-// eslint-disable-next-line import/newline-after-import
-import { mockTypeORM } from '../utils/utils';
-const [getManyMock, saveMock] = mockTypeORM();
+import { IncomingMessage } from 'node:http';
+import { Socket } from 'node:net';
 import Bill from '../../src/entity/Bill';
 import Tweet from '../../src/entity/Tweet';
 import runTweetTask, {
   handleTwitterResponse,
   logger as tweetBillLogger
 } from '../../src/scripts/tweetBill';
-import { IncomingMessage } from 'http';
-import { Socket } from 'net';
-/* eslint-enable import/first */
-/* eslint-enable import/order */
 
-const postMock = jest.fn();
-jest.mock('twit', () => {
-  return class {
-    post = postMock;
+// Stubs the TypeORM surface our code touches: the active-record-ish global
+// connection and the decorators the entities apply at import time. Everything
+// lives in vi.hoisted so the vi.mock factory references no imports and is
+// therefore immune to import ordering. (All of this goes away in #007.)
+const { getManyMock, saveMock, postMock, typeorm } = vi.hoisted(() => {
+  const getManyMock = vi.fn();
+  const saveMock = vi.fn();
+  const postMock = vi.fn();
+  const decorator = () => vi.fn();
+  return {
+    getManyMock,
+    saveMock,
+    postMock,
+    typeorm: {
+      getConnection: () => ({
+        getRepository: () => ({
+          createQueryBuilder: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnThis(),
+            leftJoinAndMapOne: vi.fn().mockReturnThis(),
+            getMany: getManyMock
+          }),
+          save: saveMock
+        }),
+        close: () => vi.fn()
+      }),
+      createConnection: () => vi.fn(),
+      Repository: decorator,
+      Entity: decorator,
+      PrimaryGeneratedColumn: decorator,
+      Column: decorator,
+      Index: decorator,
+      Unique: decorator,
+      OneToOne: decorator,
+      JoinColumn: decorator,
+      CreateDateColumn: decorator
+    }
   };
 });
+
+vi.mock('typeorm', () => typeorm);
+vi.mock('twit', () => ({
+  default: class {
+    post = postMock;
+  }
+}));
 
 const bills = [
   {
@@ -64,15 +96,11 @@ describe('tweetBill', () => {
     expect(() => {
       handleTwitterResponse(new Error('OMG'), {}, msg);
     }).toThrow(new Error('Failed to Tweet -- Error: OMG'));
-    const infoSpy = jest
-      .spyOn(tweetBillLogger, 'info')
-      .mockImplementation((message: string) => message);
+    const infoSpy = vi.spyOn(tweetBillLogger, 'info').mockImplementation(() => undefined);
     handleTwitterResponse(null, { id_str: '1', created_at: '2', text: 'tweet' }, msg);
     expect(infoSpy).toHaveBeenCalled();
     expect(infoSpy).toHaveBeenCalledWith('tweet id: 1 created_at: 2 text: tweet');
-    const warnSpy = jest
-      .spyOn(tweetBillLogger, 'warn')
-      .mockImplementation((message: string) => message);
+    const warnSpy = vi.spyOn(tweetBillLogger, 'warn').mockImplementation(() => undefined);
     handleTwitterResponse(null, { created_at: '2', text: 'tweet' }, msg);
     expect(warnSpy).toHaveBeenCalledWith('Twitter response had an unexpected type');
   });

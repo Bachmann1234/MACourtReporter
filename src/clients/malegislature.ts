@@ -1,7 +1,7 @@
 import axios from 'axios';
-import Pino from 'pino';
 import { load as cheerioLoad } from 'cheerio';
-import { GeneralCourt } from '../legislature/generalCourt';
+import Pino from 'pino';
+import type { GeneralCourt } from '../legislature/generalCourt';
 
 const ROOT_PAGE = 'https://malegislature.gov';
 
@@ -27,7 +27,7 @@ export function validatePotentialBill(bill: ScrapedBill): void {
 export function findBillsInSearchPage(pageHtml: string): ScrapedBill[] {
   const $ = cheerioLoad(pageHtml);
   return $('#searchTable tbody tr')
-    .map((i, elem) => {
+    .map((_i, elem) => {
       const [, billNumber, filedBy, summary] = $(elem).find('td').toArray();
       const billNumberElement = $(billNumber);
       const bill = {

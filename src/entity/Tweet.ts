@@ -1,10 +1,10 @@
 import {
+  Column,
+  CreateDateColumn,
   Entity,
-  PrimaryGeneratedColumn,
   JoinColumn,
   OneToOne,
-  Column,
-  CreateDateColumn
+  PrimaryGeneratedColumn
 } from 'typeorm';
 import Bill from './Bill';
 

@@ -1,21 +1,48 @@
-/* eslint-disable import/first */
-/* eslint-disable import/order */
-// eslint-disable-next-line import/newline-after-import
-import { mockTypeORM } from '../utils/utils';
-const [getManyMock, saveMock] = mockTypeORM();
-
-import { mocked } from 'ts-jest/utils';
 import { queryRecentBills } from '../../src/clients/malegislature';
 import Bill from '../../src/entity/Bill';
 import updateBillsInDb from '../../src/scripts/updateBillsInDb';
-/* eslint-enable import/first */
-/* eslint-enable import/order */
 
-jest.mock('../../src/clients/malegislature', () => {
+// Stubs the TypeORM surface our code touches: the active-record-ish global
+// connection and the decorators the entities apply at import time. Everything
+// lives in vi.hoisted so the vi.mock factory references no imports and is
+// therefore immune to import ordering. (All of this goes away in #007.)
+const { getManyMock, saveMock, typeorm } = vi.hoisted(() => {
+  const getManyMock = vi.fn();
+  const saveMock = vi.fn();
+  const decorator = () => vi.fn();
   return {
-    queryRecentBills: jest.fn()
+    getManyMock,
+    saveMock,
+    typeorm: {
+      getConnection: () => ({
+        getRepository: () => ({
+          createQueryBuilder: vi.fn().mockReturnValue({
+            where: vi.fn().mockReturnThis(),
+            leftJoinAndMapOne: vi.fn().mockReturnThis(),
+            getMany: getManyMock
+          }),
+          save: saveMock
+        }),
+        close: () => vi.fn()
+      }),
+      createConnection: () => vi.fn(),
+      Repository: decorator,
+      Entity: decorator,
+      PrimaryGeneratedColumn: decorator,
+      Column: decorator,
+      Index: decorator,
+      Unique: decorator,
+      OneToOne: decorator,
+      JoinColumn: decorator,
+      CreateDateColumn: decorator
+    }
   };
 });
+
+vi.mock('typeorm', () => typeorm);
+vi.mock('../../src/clients/malegislature', () => ({
+  queryRecentBills: vi.fn()
+}));
 
 const scrapedBills = [
   {
@@ -35,12 +62,12 @@ const scrapedBills = [
 
 describe('updateBillsInDb', () => {
   it('saves bills to the db', async () => {
-    mocked(queryRecentBills).mockResolvedValue(scrapedBills);
+    vi.mocked(queryRecentBills).mockResolvedValue(scrapedBills);
     getManyMock.mockResolvedValue([]);
     saveMock.mockResolvedValue([new Bill(), new Bill()]); // The actual content does not matter. just throwing back empties
     await updateBillsInDb();
-    expect(mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
-    expect(mocked(queryRecentBills)).toHaveBeenCalledWith({
+    expect(vi.mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(queryRecentBills)).toHaveBeenCalledWith({
       courtNumber: 192,
       searchId: '3139326e64202843757272656e7429'
     });
@@ -49,11 +76,11 @@ describe('updateBillsInDb', () => {
   });
 
   it('ignores bills that have already been saved', async () => {
-    mocked(queryRecentBills).mockResolvedValue(scrapedBills);
+    vi.mocked(queryRecentBills).mockResolvedValue(scrapedBills);
     getManyMock.mockResolvedValue(scrapedBills.map(Bill.fromScrapedBill));
     await updateBillsInDb();
-    expect(mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
-    expect(mocked(queryRecentBills)).toHaveBeenCalledWith({
+    expect(vi.mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
+    expect(vi.mocked(queryRecentBills)).toHaveBeenCalledWith({
       courtNumber: 192,
       searchId: '3139326e64202843757272656e7429'
     });

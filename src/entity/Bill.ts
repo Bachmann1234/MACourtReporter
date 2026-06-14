@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, Unique, CreateDateColumn } from 'typeorm';
-import { ScrapedBill } from '../clients/malegislature';
+import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import type { ScrapedBill } from '../clients/malegislature';
 
 @Entity()
 @Unique(['billNumber'])
