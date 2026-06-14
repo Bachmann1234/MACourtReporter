@@ -20,9 +20,7 @@ export type ScrapedBill = {
 
 export function validatePotentialBill(bill: ScrapedBill): void {
   // Apparently filedby can be null. Who woulda knew?
-  if (
-    !(bill.billNumber && bill.summary && bill.url && bill.billNumber.match(/(H|HD|SD|S)\.\d+/g))
-  ) {
+  if (!(bill.billNumber && bill.summary && bill.url && bill.billNumber.match(/(H|HD|SD|S)\.\d+/))) {
     logger.error({ bill }, 'Extracted malformed bill');
     throw Error('Bill looks strange');
   }
@@ -39,11 +37,15 @@ export function findBillsInSearchPage(pageHtml: string): ScrapedBill[] {
       // no anchor.
       const summaryElement = $(summary);
       const summaryTitle = summaryElement.find('a');
+      // Pull the link via attr() rather than indexing the DOM node directly: a
+      // row missing the expected cell/anchor yields undefined here instead of a
+      // raw TypeError, so validatePotentialBill can fail with a clean message.
+      const href = billNumberElement.find('a').attr('href');
       const bill = {
         billNumber: billNumberElement.text().trim(),
         summary: (summaryTitle.length ? summaryTitle.text() : summaryElement.text()).trim(),
         filedBy: $(filedBy).text().trim(),
-        url: `${ROOT_PAGE}${billNumberElement.find('a')[0].attribs.href}`
+        url: href ? `${ROOT_PAGE}${href}` : ''
       };
       validatePotentialBill(bill);
       return bill;

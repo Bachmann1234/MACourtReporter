@@ -3,16 +3,16 @@
 Reports on the activities of the Massachusetts General Court. Scrapes bills from
 malegislature.gov and posts them to social media.
 
-## Status: reviving (June 2026)
+## Status: revived (June 2026) — operating
 
-This repo was dormant for ~4 years and is being revived. The work is planned as
-numbered tickets in [`tickets/`](./tickets), with [`tickets/README.md`](./tickets/README.md)
-as the index and source of truth.
+This repo was dormant for ~4 years and has been revived; all of the planned
+tickets in [`tickets/`](./tickets) are `DONE` and it now runs as a cron job on
+the basement box (see [DEPLOY.md](./DEPLOY.md)). [`tickets/README.md`](./tickets/README.md)
+remains the index and design record; new work should get a new ticket.
 
-**Roadmap is organized into phases.** When asked to "do phase N", read
-`tickets/README.md`, then execute the tickets listed under that phase, in the
-order shown — checking each ticket's **Decided** and **Open questions** sections
-before starting.
+**The phase roadmap below is historical** — it records how the revival was
+sequenced and is kept for context. There is no outstanding phase work; "do phase
+N" no longer applies.
 
 Phases at a glance:
 1. **Foundation** — toolchain (Biome + Vitest), Node bump.

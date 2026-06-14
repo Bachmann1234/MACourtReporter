@@ -24,6 +24,23 @@ test('Can handle a bill with no filer', () => {
   );
 });
 
+test('Stays within 300 graphemes when the body lands exactly on the budget boundary', () => {
+  // Regression: the un-truncated branch once reserved only one of the two spaces
+  // in "<body> <url> <hash>", so a body sized exactly to the budget produced a
+  // 301-grapheme post that Bluesky rejects. Walk a range of summary lengths that
+  // brackets the boundary and assert none exceed the limit.
+  const url = 'https://malegislature.gov/Bills/194/H1';
+  for (let pad = 250; pad <= 260; pad++) {
+    const bill: ComposableBill = {
+      filedBy: 'Somebody',
+      billNumber: 'H.1',
+      summary: 'x'.repeat(pad),
+      url
+    };
+    expect(composePostText(bill).length).toBeLessThanOrEqual(300);
+  }
+});
+
 test('Will shorten an over-long summary to fit the 300-grapheme limit', () => {
   const bill: ComposableBill = {
     summary: `An Act ${'relative to municipal governance and public accountability '.repeat(10)}`,

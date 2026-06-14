@@ -1,5 +1,9 @@
 # Tickets
 
+> **Status: all tickets `DONE` (June 2026).** The revival is complete and the bot
+> is operating; this directory is now a design record rather than an active
+> backlog. New work should get its own ticket appended below.
+
 Tracking the work to revive MACourtReporter after its ~4-year dormancy.
 
 These came out of a June 2026 assessment of the scraper against the live

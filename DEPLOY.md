@@ -17,7 +17,7 @@ oldest un-posted bill to Bluesky). No container, no server, no managed DB. See
 
 ## 2. Box prerequisites
 
-- **Node 22.x** (`package.json` pins `engines.node` to `22.x`). Confirm with
+- **Node 24.x** (`package.json` pins `engines.node` to `24.x`). Confirm with
   `node -v`, and note the absolute path (`which node`) — the crontab needs it.
 - `git`, and a C toolchain for `better-sqlite3`'s native build (usually already
   present; `build-essential` / Xcode CLT if not).

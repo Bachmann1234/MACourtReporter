@@ -12,9 +12,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.0",
-    "@tsconfig/node22": "^22.0.5",
+    "@tsconfig/node24": "^24.0.4",
     "@types/better-sqlite3": "^7.6.13",
-    "@types/node": "^22.19.21",
+    "@types/node": "^24.13.2",
     "@vitest/coverage-v8": "^4.1.8",
     "drizzle-kit": "^0.31.10",
     "typescript": "^6.0.3",
@@ -46,6 +46,6 @@
   },
   "homepage": "https://github.com/Bachmann1234/MACourtReporter#readme",
   "engines": {
-    "node": "22.x"
+    "node": "24.x"
   }
 }

@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 import { eq } from 'drizzle-orm';
 import Pino from 'pino';
 import { type DB, getDb } from '../db';
+import { compareByBillNumberAsc } from '../db/billOrder';
 import { type Bill, bills } from '../db/schema';
 
 config({ quiet: true });
@@ -23,16 +24,6 @@ function chamberOf(billNumber: string): 'House' | 'Senate' | 'Other' {
   return 'Other';
 }
 
-// Oldest first by bill number, matching how postBill.ts picks what to post next.
-function byBillNumberAsc(a: Bill, b: Bill): number {
-  const aDigits = a.billNumber.match(/\d+/);
-  const bDigits = b.billNumber.match(/\d+/);
-  if (aDigits === null || bDigits === null) {
-    throw new Error(`Could not match bill numbers: ${a.billNumber} ${b.billNumber}`);
-  }
-  return Number.parseInt(aDigits[0], 10) - Number.parseInt(bDigits[0], 10);
-}
-
 export type QueueStatus = {
   total: number;
   byChamber: Record<'House' | 'Senate' | 'Other', number>;
@@ -45,7 +36,7 @@ export function getQueueStatus(db: DB = getDb()): QueueStatus {
   for (const bill of queued) {
     byChamber[chamberOf(bill.billNumber)] += 1;
   }
-  const oldest = queued.length > 0 ? [...queued].sort(byBillNumberAsc)[0] : undefined;
+  const oldest = queued.length > 0 ? [...queued].sort(compareByBillNumberAsc)[0] : undefined;
   return { total: queued.length, byChamber, oldest };
 }
 

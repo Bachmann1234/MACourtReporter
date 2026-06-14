@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import { eq } from 'drizzle-orm';
 import Pino from 'pino';
 import { type DB, getDb } from '../db';
+import { compareByBillNumberAsc } from '../db/billOrder';
 import { type Bill, bills, posts } from '../db/schema';
 import { composePostText } from '../posts/composePost';
 
@@ -36,14 +37,7 @@ function oldestNewBill(db: DB): Bill | undefined {
     .from(bills)
     .where(eq(bills.status, 'NEW'))
     .all()
-    .sort((a, b) => {
-      const aDigits = a.billNumber.match(/\d+/);
-      const bDigits = b.billNumber.match(/\d+/);
-      if (aDigits === null || bDigits === null) {
-        throw new Error(`Could not match bill numbers: ${a.billNumber} ${b.billNumber}`);
-      }
-      return Number.parseInt(aDigits[0], 10) - Number.parseInt(bDigits[0], 10);
-    })[0];
+    .sort(compareByBillNumberAsc)[0];
 }
 
 export default async function runPostTask(db: DB = getDb()): Promise<void> {
