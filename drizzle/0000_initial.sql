@@ -1,6 +1,7 @@
 CREATE TABLE `bill` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	`court_number` integer NOT NULL,
 	`bill_number` text NOT NULL,
 	`filed_by` text NOT NULL,
 	`summary` text NOT NULL,
@@ -8,7 +9,7 @@ CREATE TABLE `bill` (
 	`status` text DEFAULT 'NEW' NOT NULL
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `bill_number_idx` ON `bill` (`bill_number`);--> statement-breakpoint
+CREATE UNIQUE INDEX `court_bill_number_idx` ON `bill` (`court_number`,`bill_number`);--> statement-breakpoint
 CREATE TABLE `post` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`created` text DEFAULT CURRENT_TIMESTAMP NOT NULL,

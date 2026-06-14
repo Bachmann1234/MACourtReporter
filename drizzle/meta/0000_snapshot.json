@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "edf2007b-0086-4759-9c79-c2f9a36df753",
+  "id": "1664429f-5b46-4101-b6b5-f8c2036e5f13",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "bill": {
@@ -21,6 +21,13 @@
           "notNull": true,
           "autoincrement": false,
           "default": "CURRENT_TIMESTAMP"
+        },
+        "court_number": {
+          "name": "court_number",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         },
         "bill_number": {
           "name": "bill_number",
@@ -60,9 +67,10 @@
         }
       },
       "indexes": {
-        "bill_number_idx": {
-          "name": "bill_number_idx",
+        "court_bill_number_idx": {
+          "name": "court_bill_number_idx",
           "columns": [
+            "court_number",
             "bill_number"
           ],
           "isUnique": true

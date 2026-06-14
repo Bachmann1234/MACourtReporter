@@ -3,7 +3,8 @@
 **Status:** TODO
 **Area:** infra
 **Size:** M
-**Depends on:** #007 (SQLite, so cron runs need no DB service)
+**Depends on:** #007 (SQLite, so cron runs need no DB service), #012 (court-scoped
+bill identity — the auto-seed logic keys off per-court rows)
 
 ## Why
 The Express server (`src/scripts/server.ts`) exists only to receive external
@@ -26,23 +27,55 @@ are outbound HTTPS, so there's nothing to expose.
 - Decide run cadence (how often to scrape; how often / how many to post).
 - `.env` on the box holds `BLUESKY_*` creds + `DB_PATH`.
 
-## First-run behavior (DECIDED): seed silently, then post new
-Fresh empty DB. The scraper only reads page 1 (~25 most recent bills), and we do
-NOT want to post those on launch — only bills that appear *after* launch.
+## Seed + session rollover (DECIDED): self-seeding, no manual step
+The scraper only reads page 1 (~25 most recent bills). On a fresh DB — and again
+at every 2-year session rollover (Jan 2027 = 195th, etc.) — we must NOT post the
+existing backlog; only bills that appear *after* we start tracking that session.
 
-- Provide a one-time **seed step**: scrape page 1 and record every current bill
-  as already-handled WITHOUT posting it. Implementation options (decide in #004
-  since it touches the Post entity):
-  - mark each seeded `Bill` as handled (e.g. a `posted`/`seeded` flag), or
-  - create a sentinel Post row per seeded bill (flagged `seeded: true` so it's
-    distinguishable from a real post).
-- After seeding, the normal post task picks up only genuinely new bills.
-- Cadence still open: one bill per run? Since we're not draining a backlog, a
-  simple "post the single oldest un-posted bill per run" is fine.
+Live-site cadence (sampled June 2026, see below) makes this tractable: in steady
+state the 194th gains only **~2–4 House bills/day**, so page 1 turns over every
+~5–7 days. The only fast churn is a session's filing-deadline day, when thousands
+file at once. So two automatic layers, no dates to remember and no manual seed
+script:
+
+1. **Auto-seed a brand-new session.** `getCurrentLegislature()` derives the court
+   from the date. In `updateBillsInDb`: if the current court has **zero** rows in
+   the DB, mark everything the scrape finds as `SKIPPED` (seeded), not `NEW`. This
+   unifies the one-time seed and rollover handling — the 194th seeds itself on the
+   first run today; every future session seeds itself in January of its year.
+   (Requires #012's per-court identity to ask "any rows for this court yet?".)
+
+2. **Flood guard.** A session can trickle a few bills (court row count > 0,
+   marked `NEW`) *before* its deadline flood of thousands. So: if a single scrape
+   brings in **more than K = 15** previously-unseen bills, mark that batch
+   `SKIPPED` and log a warning instead of queueing them to post. In steady state a
+   scrape sees 0–1 new bills, so this never trips; a deadline flood = page 1
+   entirely new every scrape → all skipped automatically. Safe failure mode is
+   "stay quiet," not "spam thousands one-per-run for months."
+   - Tradeoff (accepted): if the box is down ~2+ weeks, catch-up could exceed K
+     and be wrongly skipped. K = 15 keeps normal multi-day downtime posting its
+     backlog; the warning log flags the rare long-downtime case for manual fixup.
+
+After seeding/guarding, the normal post task picks up only genuinely new bills.
+
+## Cadence (DECIDED)
+- **Scrape hourly** — overkill for steady state (page 1 barely moves day to day),
+  which is the point: ample margin, and no pagination needed for normal operation.
+- **Post the single oldest `NEW` bill per run, every 2 hours** (12 slots/day).
+  At ~2–4 new/day this keeps up and drains any small backlog. No multi-post burst.
+- **Pure cron** — scripts exit; no pm2/systemd service needed.
+
+### Filing-cadence evidence (194th, sampled 2026-06-14)
+Earliest action date per House bill, via bill detail pages:
+H.1000 & H.3000 = 2/27/2025 (deadline-day flood, thousands at once) · H.4500 =
+9/11/2025 · H.5000 = 2/5/2026 · H.5300 = 3/26/2026 · H.5400 = 4/21/2026 · H.5450
+= 5/26/2026 · H.5490 = 6/10/2026 · H.5504 (top) = 6/8/2026. → ~2–4 House bills/day
+now; the early-session flood is already filed and gets seeded as `SKIPPED`.
 
 ## Open questions
-- Cadence: confirm "one oldest un-posted bill per run" + how often cron fires.
 - Logging/alerting: plain logfile + logrotate, or notify-on-failure somewhere?
+  (The flood-guard + zero-results warnings are the events most worth surfacing.)
 - Backups: cron `sqlite3 .backup` / file copy of the db to another location?
-- Process manager: pure cron is enough (scripts exit); no need for pm2/systemd
-  service since there's no long-running process. Confirm.
+- Senate coverage (NOT this ticket): the search sorts by bill number desc and
+  House numbers dwarf Senate, so page 1 looks House-only — the bot may never
+  surface Senate bills. Worth verifying + a separate ticket if confirmed.

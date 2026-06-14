@@ -53,7 +53,7 @@ let db: DB;
 beforeEach(() => {
   db = createTestDb();
   db.insert(bills)
-    .values(scrapedBills.map((b) => ({ ...b, status: 'NEW' as const })))
+    .values(scrapedBills.map((b) => ({ ...b, courtNumber: 194, status: 'NEW' as const })))
     .run();
   postMock.mockResolvedValue({ uri: POST_URI, cid: 'cid123' });
   Object.assign(process.env, BLUESKY_ENV);

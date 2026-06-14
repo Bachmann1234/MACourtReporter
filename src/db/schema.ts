@@ -10,13 +10,16 @@ export const bills = sqliteTable(
   {
     id: integer('id').primaryKey({ autoIncrement: true }),
     created: text('created').notNull().default(sql`CURRENT_TIMESTAMP`),
+    // The General Court (session) this bill belongs to, e.g. 194. Bill numbers
+    // restart every session, so identity is (courtNumber, billNumber) — see #012.
+    courtNumber: integer('court_number').notNull(),
     billNumber: text('bill_number').notNull(),
     filedBy: text('filed_by').notNull(),
     summary: text('summary').notNull(),
     url: text('url').notNull(),
     status: text('status', { enum: BILL_STATUSES }).notNull().default('NEW')
   },
-  (table) => [uniqueIndex('bill_number_idx').on(table.billNumber)]
+  (table) => [uniqueIndex('court_bill_number_idx').on(table.courtNumber, table.billNumber)]
 );
 
 // One row per real post. "Has this bill been posted" is authoritative on

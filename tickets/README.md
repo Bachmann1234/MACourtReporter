@@ -21,9 +21,11 @@ listed tickets in the order shown.
   better-sqlite3 (carries the `Post` rename + `Bill.status` from 004;
   decorators/reflect-metadata come out here).
 - **Phase 4 — Posting:** [004](./004-replace-twitter-with-bluesky.md) +
-  [010](./010-post-composition.md).
-- **Phase 5 — Deploy:** [008](./008-cron-not-server.md) +
-  [009](./009-decommission-fly.md).
+  [010](./010-post-composition.md). *(DONE)*
+- **Phase 5 — Deploy:** [012](./012-court-scoped-bill-identity.md) ->
+  [008](./008-cron-not-server.md) ([009](./009-decommission-fly.md) already DONE).
+  012 (per-court bill identity) goes first — 008's auto-seed/rollover logic
+  depends on it.
 
 Coupled dependency removals ride with their feature ticket (decorators with 007,
 `twit` with 004, `express` with 008) — removing them upfront would break the
@@ -52,6 +54,9 @@ favor of a local SQLite file driven by cron.
 - [007 — Switch persistence Postgres -> SQLite](./007-postgres-to-sqlite.md)
 - [008 — Run as a cron job; remove the Express server](./008-cron-not-server.md)
 - [009 — Decommission Fly / Docker deploy config](./009-decommission-fly.md)
+
+## Data layer
+- [012 — Court-scope bill identity (fix cross-session collision)](./012-court-scoped-bill-identity.md)
 
 ## Toolchain / hygiene
 - [011 — Toolchain modernization: Biome + Vitest + tsconfig](./011-toolchain-modernization.md)

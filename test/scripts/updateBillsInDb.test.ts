@@ -43,6 +43,14 @@ describe('updateBillsInDb', () => {
     expect(saved.every((b) => b.status === 'NEW')).toBe(true);
   });
 
+  it('stamps the current court number on saved bills', async () => {
+    vi.mocked(queryRecentBills).mockResolvedValue(scrapedBills);
+    await updateBillsInDb(db);
+    const saved = db.select().from(bills).all();
+    const currentCourt = getCurrentLegislature().courtNumber;
+    expect(saved.every((b) => b.courtNumber === currentCourt)).toBe(true);
+  });
+
   it('ignores bills that have already been saved', async () => {
     vi.mocked(queryRecentBills).mockResolvedValue(scrapedBills);
     await updateBillsInDb(db);
@@ -50,5 +58,23 @@ describe('updateBillsInDb', () => {
     await updateBillsInDb(db);
     const saved = db.select().from(bills).all();
     expect(saved).toHaveLength(2);
+  });
+
+  it('treats a reused bill number from a prior session as new (#012)', async () => {
+    // Bill numbers restart each session. A leftover row from the previous court
+    // must not mask the same number in the current one.
+    const currentCourt = getCurrentLegislature().courtNumber;
+    db.insert(bills)
+      .values({
+        ...scrapedBills[0],
+        courtNumber: currentCourt - 1,
+        status: 'POSTED'
+      })
+      .run();
+    vi.mocked(queryRecentBills).mockResolvedValue([scrapedBills[0]]);
+    await updateBillsInDb(db);
+    const saved = db.select().from(bills).all();
+    expect(saved).toHaveLength(2);
+    expect(saved.filter((b) => b.courtNumber === currentCourt)).toHaveLength(1);
   });
 });
