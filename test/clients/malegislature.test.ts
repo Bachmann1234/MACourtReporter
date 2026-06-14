@@ -5,167 +5,168 @@ test('Extracts bills from the ma bill search page', () => {
   const page = loadTextFixture('searchPage.html');
   expect(findBillsInSearchPage(page)).toStrictEqual([
     {
-      billNumber: 'H.5086',
-      filedBy: 'Labor and Workforce Development (J)',
+      billNumber: 'H.5504',
+      filedBy: 'Meschino, Joan',
       summary:
-        'An Act to prevent wage theft, promote employer accountability, and enhance public enforcement',
-      url: 'https://malegislature.gov/Bills/191/H5086'
+        'An Act authorizing the town of Hingham to grant to the Commonwealth of Massachusetts certain parcels of land in the town of Hingham for highway purpo...',
+      url: 'https://malegislature.gov/Bills/194/H5504'
     },
     {
-      billNumber: 'H.5085',
-      filedBy: 'Labor and Workforce Development (J)',
-      summary: 'An Act requiring one fair wage',
-      url: 'https://malegislature.gov/Bills/191/H5085'
-    },
-    {
-      billNumber: 'H.5084',
-      filedBy: 'Murphy, James M.',
-      summary: 'An Act relative to insurance requirements',
-      url: 'https://malegislature.gov/Bills/191/H5084'
-    },
-    {
-      billNumber: 'H.5083',
-      filedBy: 'Cabral, Antonio F. D.',
-      summary: 'An Act relative to polling place security and integrity',
-      url: 'https://malegislature.gov/Bills/191/H5083'
-    },
-    {
-      billNumber: 'H.5082',
-      filedBy: 'Speliotis, Theodore C.',
+      billNumber: 'H.5503',
+      filedBy: 'Zlotnik, Jonathan D.',
       summary:
-        'An Act authorizing the Town of Kingston to establish a Special Fund to process activity produced by Non-Town Net Metering',
-      url: 'https://malegislature.gov/Bills/191/H5082'
+        'An Act designating a certain bridge in the city of Gardner as the Representative Robert L. Rice, Jr. Bridge',
+      url: 'https://malegislature.gov/Bills/194/H5503'
     },
     {
-      billNumber: 'H.5077',
+      billNumber: 'H.5501',
+      filedBy: '',
+      summary:
+        'An Act making appropriations for the fiscal year 2027 for the maintenance of the departments, boards, commissions, institutions, and certain activiti...',
+      url: 'https://malegislature.gov/Bills/194/H5501'
+    },
+    {
+      billNumber: 'H.5500',
+      filedBy: 'Ways and Means (H)',
+      summary:
+        'An Act making appropriations for the fiscal year 2027 for the maintenance of the departments, boards, commissions, institutions, and certain activiti...',
+      url: 'https://malegislature.gov/Bills/194/H5500'
+    },
+    {
+      billNumber: 'H.5499',
+      filedBy: 'Williams, Bud L.',
+      summary:
+        "An Act to include teachers from the Springfield Empowerment Zone in the Massachusetts Teachers' Retirement System",
+      url: 'https://malegislature.gov/Bills/194/H5499'
+    },
+    {
+      billNumber: 'H.5498',
       filedBy: 'Cusack, Mark J.',
-      summary: 'An Act establishing the Tri-Town Water District',
-      url: 'https://malegislature.gov/Bills/191/H5077'
+      summary: 'An Act authorizing the grant of creditable service to Thomas Brooks',
+      url: 'https://malegislature.gov/Bills/194/H5498'
     },
     {
-      billNumber: 'H.5076',
-      filedBy: 'Haddad, Patricia A.',
-      summary: 'An Act relative to the Swansea water district elections',
-      url: 'https://malegislature.gov/Bills/191/H5076'
+      billNumber: 'H.5497',
+      filedBy: 'Badger, Michelle L.',
+      summary: 'An Act amending the town charter for the town of Plymouth',
+      url: 'https://malegislature.gov/Bills/194/H5497'
     },
     {
-      billNumber: 'H.5075',
-      filedBy: 'Hogan, Kate',
+      billNumber: 'H.5496',
+      filedBy: '',
       summary:
-        'An Act authorizing the town of Maynard to grant one additional license for the sale of all alcoholic beverages to be consumed off the premises',
-      url: 'https://malegislature.gov/Bills/191/H5075'
+        'An Act making appropriations for the fiscal year 2026 to provide for supplementing certain existing appropriations and for certain other activities a...',
+      url: 'https://malegislature.gov/Bills/194/H5496'
     },
     {
-      billNumber: 'H.5074',
-      filedBy: 'Public Service (J)',
+      billNumber: 'H.5495',
+      filedBy: 'Fiola, Carole A.',
+      summary: 'Resolutions designating August 8th and 9th, 2026 as the sales tax holiday',
+      url: 'https://malegislature.gov/Bills/194/H5495'
+    },
+    {
+      billNumber: 'H.5494',
+      filedBy: 'Walsh, Thomas P.',
+      summary: 'Floor Amendment',
+      url: 'https://malegislature.gov/Bills/194/H5494'
+    },
+    {
+      billNumber: 'H.5493',
+      filedBy: 'Ways and Means (H)',
       summary:
-        'An Act directing the State Retirement Board to grant creditable service to Cheryl A. Bednarik',
-      url: 'https://malegislature.gov/Bills/191/H5074'
+        'An Act making appropriations for the fiscal year 2026 to provide for supplementing certain existing appropriations and for certain other activities a...',
+      url: 'https://malegislature.gov/Bills/194/H5493'
     },
     {
-      billNumber: 'H.5073',
-      filedBy: 'Environment, Natural Resources and Agriculture (J)',
-      summary: 'Study Order - Climate and Environmental Policy',
-      url: 'https://malegislature.gov/Bills/191/H5073'
-    },
-    {
-      billNumber: 'H.5072',
-      filedBy: 'Environment, Natural Resources and Agriculture (J)',
-      summary: 'Study Order - Pesticide and Toxic Management',
-      url: 'https://malegislature.gov/Bills/191/H5072'
-    },
-    {
-      billNumber: 'H.5071',
-      filedBy: 'Environment, Natural Resources and Agriculture (J)',
-      summary: 'Study Order - Animal Welfare',
-      url: 'https://malegislature.gov/Bills/191/H5071'
-    },
-    {
-      billNumber: 'H.5070',
-      filedBy: 'Environment, Natural Resources and Agriculture (J)',
-      summary: 'Study Order - Local Environmental Matters',
-      url: 'https://malegislature.gov/Bills/191/H5070'
-    },
-    {
-      billNumber: 'H.5069',
-      filedBy: 'Boldyga, Nicholas A.',
-      summary: 'An Act relative to certain civil service positions in the Agawam public schools',
-      url: 'https://malegislature.gov/Bills/191/H5069'
-    },
-    {
-      billNumber: 'H.5068',
-      filedBy: 'Consumer Protection and Professional Licensure (J)',
+      billNumber: 'H.5492',
+      filedBy: 'Ways and Means (H)',
       summary:
-        'An Act authorizing the town of Dedham to grant one additional license for the sale of wine and malt to be drunk on premises',
-      url: 'https://malegislature.gov/Bills/191/H5068'
+        'An Act authorizing the town of Billerica to transfer control of certain land in the town of Billerica for the Yankee Doodle Bike Path',
+      url: 'https://malegislature.gov/Bills/194/H5492'
     },
     {
-      billNumber: 'H.5067',
-      filedBy: 'Consumer Protection and Professional Licensure (J)',
-      summary: 'An Act pertaining to liquor licenses in the town of Brookline',
-      url: 'https://malegislature.gov/Bills/191/H5067'
+      billNumber: 'H.5491',
+      filedBy: 'Ways and Means (H)',
+      summary: 'An Act implementing the recommendations of the Walsh-Kennedy Commission Report',
+      url: 'https://malegislature.gov/Bills/194/H5491'
     },
     {
-      billNumber: 'H.5066',
-      filedBy: 'Labor and Workforce Development (J)',
+      billNumber: 'H.5490',
+      filedBy: 'Ways and Means (H)',
       summary:
-        'An Act relative to additional unemployment benefits for the neediest recipients currently excluded from the Lost Wages Assistance program',
-      url: 'https://malegislature.gov/Bills/191/H5066'
+        'An Act providing for the ownership and maintenance of the Town Line Brook and Linden Brook culverts and dams',
+      url: 'https://malegislature.gov/Bills/194/H5490'
     },
     {
-      billNumber: 'H.5065',
-      filedBy: 'Baker, Charles D.',
+      billNumber: 'H.5489',
+      filedBy: 'Ways and Means (H)',
+      summary: 'An Act regarding free expression',
+      url: 'https://malegislature.gov/Bills/194/H5489'
+    },
+    {
+      billNumber: 'H.5488',
+      filedBy: 'Ways and Means (H)',
+      summary: 'An Act relative to violation of regulation regarding hot work processes',
+      url: 'https://malegislature.gov/Bills/194/H5488'
+    },
+    {
+      billNumber: 'H.5487',
+      filedBy: 'Ciccolo, Michelle L.',
       summary:
-        'An Act making certain appropriations for fiscal year 2021 before final action on the General Appropriation Bill',
-      url: 'https://malegislature.gov/Bills/191/H5065'
+        'An Act to establish a surcharge on specific residential development activities for the purpose of funding the creation of community housing',
+      url: 'https://malegislature.gov/Bills/194/H5487'
     },
     {
-      billNumber: 'H.5064',
-      filedBy: 'Hay, Stephan',
+      billNumber: 'H.5486',
+      filedBy: 'Linsky, David Paul',
+      summary: "An Act allowing 'print free' digital legal notices for the town of Wayland",
+      url: 'https://malegislature.gov/Bills/194/H5486'
+    },
+    {
+      billNumber: 'H.5485',
+      filedBy: 'Linsky, David Paul',
       summary:
-        'An Act relative to additional unemployment benefits for the neediest recipients currently excluded from the Lost Wages Assistance program',
-      url: 'https://malegislature.gov/Bills/191/H5064'
+        'An Act authorizing the town of Wayland Select Board to grant permission to use land for green burials',
+      url: 'https://malegislature.gov/Bills/194/H5485'
     },
     {
-      billNumber: 'H.5063',
-      filedBy: 'Lombardo, Marc T.',
+      billNumber: 'H.5484',
+      filedBy: 'Luddy, Hadley',
+      summary: 'An Act to prohibit the application of fertilizer in the town of Eastham',
+      url: 'https://malegislature.gov/Bills/194/H5484'
+    },
+    {
+      billNumber: 'H.5483',
+      filedBy: 'Barrett, III, John',
       summary:
-        'An Act establishing a sick leave bank for Brian Thompson, an employee of Department of Corrections',
-      url: 'https://malegislature.gov/Bills/191/H5063'
+        'An Act allowing the town of Williamstown to ban second generation anticoagulant rodenticides (SGARs)',
+      url: 'https://malegislature.gov/Bills/194/H5483'
     },
     {
-      billNumber: 'H.5062',
-      filedBy: 'Connolly, Mike',
+      billNumber: 'H.5482',
+      filedBy: 'Walsh, Thomas P.',
       summary:
-        'An Act providing for an extension of the COVID-19 eviction and foreclosure moratorium',
-      url: 'https://malegislature.gov/Bills/191/H5062'
+        'An Act authorizing municipalities to opt-in to a temporary pilot to extend the hours of liquor licenses and to allow for public consumption in design...',
+      url: 'https://malegislature.gov/Bills/194/H5482'
     },
     {
-      billNumber: 'H.5061',
-      filedBy: 'Speliotis, Theodore C.',
+      billNumber: 'H.5481',
+      filedBy: 'Linsky, David Paul',
       summary:
-        'An Act authorizing the town of Plainville to grant additional licenses for the sale of alcoholic beverages',
-      url: 'https://malegislature.gov/Bills/191/H5061'
+        'An Act authorizing the town of Wayland to grant additional licenses for the sale of all alcoholic beverages to be drunk on the premises',
+      url: 'https://malegislature.gov/Bills/194/H5481'
     },
     {
-      billNumber: 'H.5060',
-      filedBy: 'Speliotis, Theodore C.',
-      summary:
-        'An Act authorizing the commissioner of the Division of Capital Asset Management and Maintenance to convey and acquire certain parcels of land in the ...',
-      url: 'https://malegislature.gov/Bills/191/H5060'
+      billNumber: 'H.5480',
+      filedBy: 'Municipalities and Regional Government (J)',
+      summary: 'Study Order',
+      url: 'https://malegislature.gov/Bills/194/H5480'
     },
     {
-      billNumber: 'H.5059',
-      filedBy: 'State Administration and Regulatory Oversight (J)',
-      summary: 'An Act authorizing the sale of real property in Brockton',
-      url: 'https://malegislature.gov/Bills/191/H5059'
-    },
-    {
-      billNumber: 'H.5058',
-      filedBy: 'Public Service (J)',
-      summary:
-        'An Act allowing Deina Abdelkader to become a member of the state employee retirement system',
-      url: 'https://malegislature.gov/Bills/191/H5058'
+      billNumber: 'H.5479',
+      filedBy: '',
+      summary: 'An Act establishing the Massachusetts consumer data privacy act',
+      url: 'https://malegislature.gov/Bills/194/H5479'
     }
   ]);
 });

@@ -4,7 +4,6 @@
   "description": "Report on the activities of the MA General Court",
   "dependencies": {
     "@types/twit": "^2.2.28",
-    "axios": "^0.27.2",
     "cheerio": "^1.2.0",
     "dotenv": "^17.4.2",
     "express": "^4.18.1",
@@ -31,10 +30,10 @@
     "test": "vitest run --coverage",
     "ci": "npm run lint && npm run build && npm run test",
     "lint": "biome check .",
-    "queryBills": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/queryRecentBills.js",
-    "updateBills": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/updateBillsInDb.js",
-    "tweetBill": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/tweetBill.js",
-    "server": "NODE_EXTRA_CA_CERTS=./dist/DigiCertSHA2SecureServerCA.pem node ./dist/src/scripts/server.js"
+    "queryBills": "node ./dist/src/scripts/queryRecentBills.js",
+    "updateBills": "node ./dist/src/scripts/updateBillsInDb.js",
+    "tweetBill": "node ./dist/src/scripts/tweetBill.js",
+    "server": "node ./dist/src/scripts/server.js"
   },
   "repository": {
     "type": "git",

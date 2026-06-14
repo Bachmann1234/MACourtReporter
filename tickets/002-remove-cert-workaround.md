@@ -1,6 +1,6 @@
 # 002 — Remove obsolete cert workaround
 
-**Status:** TODO
+**Status:** DONE
 **Area:** scraper / build
 **Size:** S
 

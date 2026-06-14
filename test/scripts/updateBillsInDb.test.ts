@@ -1,5 +1,6 @@
 import { queryRecentBills } from '../../src/clients/malegislature';
 import Bill from '../../src/entity/Bill';
+import { getCurrentLegislature } from '../../src/legislature/generalCourt';
 import updateBillsInDb from '../../src/scripts/updateBillsInDb';
 
 // Stubs the TypeORM surface our code touches: the active-record-ish global
@@ -67,10 +68,7 @@ describe('updateBillsInDb', () => {
     saveMock.mockResolvedValue([new Bill(), new Bill()]); // The actual content does not matter. just throwing back empties
     await updateBillsInDb();
     expect(vi.mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(queryRecentBills)).toHaveBeenCalledWith({
-      courtNumber: 192,
-      searchId: '3139326e64202843757272656e7429'
-    });
+    expect(vi.mocked(queryRecentBills)).toHaveBeenCalledWith(getCurrentLegislature());
     expect(saveMock).toHaveBeenCalledTimes(1);
     expect(saveMock).toHaveBeenCalledWith(scrapedBills.map(Bill.fromScrapedBill));
   });
@@ -80,10 +78,7 @@ describe('updateBillsInDb', () => {
     getManyMock.mockResolvedValue(scrapedBills.map(Bill.fromScrapedBill));
     await updateBillsInDb();
     expect(vi.mocked(queryRecentBills)).toHaveBeenCalledTimes(1);
-    expect(vi.mocked(queryRecentBills)).toHaveBeenCalledWith({
-      courtNumber: 192,
-      searchId: '3139326e64202843757272656e7429'
-    });
+    expect(vi.mocked(queryRecentBills)).toHaveBeenCalledWith(getCurrentLegislature());
     expect(saveMock).toHaveBeenCalledTimes(1);
     expect(saveMock).toHaveBeenCalledWith([]);
   });

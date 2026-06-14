@@ -1,6 +1,6 @@
 # 003 — Fix summary extraction (title only)
 
-**Status:** TODO
+**Status:** DONE
 **Area:** scraper
 **Size:** XS
 

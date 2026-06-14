@@ -1,6 +1,6 @@
 # 001 — Bump current legislature to the 194th General Court
 
-**Status:** TODO
+**Status:** DONE
 **Area:** scraper
 **Size:** XS
 
