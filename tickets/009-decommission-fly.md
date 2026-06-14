@@ -1,6 +1,6 @@
 # 009 — Decommission Fly / Docker deploy config
 
-**Status:** TODO
+**Status:** DONE
 **Area:** infra / cleanup
 **Size:** S
 **Depends on:** #008 (no server to containerize)
