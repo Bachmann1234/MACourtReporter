@@ -36,6 +36,9 @@ scripts that exit when done (no long-running server). The SQLite file is local
 state (gitignored under `data/`) and is re-scrapable, so backups are manual for
 now — an occasional file copy is enough.
 
+For end-to-end box setup (Bluesky account, `.env`, seeding, smoke test, cron),
+see [DEPLOY.md](./DEPLOY.md).
+
 ## Cron setup on the box
 
 ```cron
