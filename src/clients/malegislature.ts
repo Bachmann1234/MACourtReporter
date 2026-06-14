@@ -1,6 +1,11 @@
 import { load as cheerioLoad } from 'cheerio';
 import Pino from 'pino';
-import type { GeneralCourt } from '../legislature/generalCourt';
+import {
+  CHAMBERS,
+  type Chamber,
+  chamberSearchId,
+  type GeneralCourt
+} from '../legislature/generalCourt';
 
 const ROOT_PAGE = 'https://malegislature.gov';
 
@@ -46,8 +51,15 @@ export function findBillsInSearchPage(pageHtml: string): ScrapedBill[] {
     .get();
 }
 
-export async function queryRecentBills(legislature: GeneralCourt): Promise<ScrapedBill[]> {
-  const courtUrl = `${ROOT_PAGE}/Bills/Search?SearchTerms=&Page=1&Refinements%5Blawsgeneralcourt%5D=${legislature.searchId}&SortManagedProperty=lawsbillnumber&Direction=desc`;
+// Page 1 of the recent-bills search for a single chamber. The search sorts by
+// bill number desc across the whole court; since the House files far more bills
+// than the Senate, an unrefined search never surfaces a single Senate bill (see
+// ticket #013). Refining by chamber gives each its own page-1 of recent filings.
+export async function queryRecentBillsForChamber(
+  legislature: GeneralCourt,
+  chamber: Chamber
+): Promise<ScrapedBill[]> {
+  const courtUrl = `${ROOT_PAGE}/Bills/Search?SearchTerms=&Page=1&Refinements%5Blawsgeneralcourt%5D=${legislature.searchId}&Refinements%5Blawsbranchname%5D=${chamberSearchId(chamber)}&SortManagedProperty=lawsbillnumber&Direction=desc`;
   const response = await fetch(courtUrl);
   if (!response.ok) {
     throw Error(`Search request failed: ${response.status} ${response.statusText}`);
@@ -55,12 +67,21 @@ export async function queryRecentBills(legislature: GeneralCourt): Promise<Scrap
   const bills = findBillsInSearchPage(await response.text());
   if (bills.length === 0) {
     // Zero results almost always means our "(Current)" derivation went stale at
-    // a session rollover, not that the court filed nothing. Surface it loudly
+    // a session rollover, not that the chamber filed nothing. Surface it loudly
     // rather than silently posting nothing. (See ticket #008 for alerting.)
     logger.warn(
-      { courtNumber: legislature.courtNumber, searchId: legislature.searchId, courtUrl },
+      { courtNumber: legislature.courtNumber, searchId: legislature.searchId, chamber, courtUrl },
       'Bill search returned zero results — current legislature derivation may be stale'
     );
   }
   return bills;
+}
+
+// Recent bills across both chambers, merged. Each chamber is scraped separately
+// because a combined search is dominated by the higher-volume House (#013).
+export async function queryRecentBills(legislature: GeneralCourt): Promise<ScrapedBill[]> {
+  const perChamber = await Promise.all(
+    CHAMBERS.map((chamber) => queryRecentBillsForChamber(legislature, chamber))
+  );
+  return perChamber.flat();
 }

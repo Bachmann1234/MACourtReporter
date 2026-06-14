@@ -1,6 +1,6 @@
 # 013 — Senate coverage (page 1 is House-only)
 
-**Status:** TODO
+**Status:** DONE
 **Area:** scraper
 **Size:** M
 **Depends on:** #012 (per-court identity — the merged scrape still keys off
@@ -51,8 +51,15 @@ blackout is the concrete bug to fix here; true date-ordering is a nice-to-have
 - **Read page 2+.** Doesn't help — Senate is below *all* House bills in the
   ordering, not just below page 1.
 
+## Resolution (2026-06-14)
+- **Chamber-refinement param:** `Refinements[lawsbranchname]`, value = hex of the
+  chamber label (same scheme as `lawsgeneralcourt`): House=`486f757365`,
+  Senate=`53656e617465`. Verified live: Senate-refined page 1 returns S.3120↓.
+- `queryRecentBills` now scrapes each chamber's page 1 (`queryRecentBillsForChamber`)
+  and merges; `updateBillsInDb` is unchanged (per-court dedupe already handles it).
+- **Flood guard K:** left at 15. Merged steady state is ~0–2 new bills/run, far
+  below the threshold; only the comment was updated.
+
 ## Open questions
-- Exact chamber-refinement param (resolve at implementation time).
-- Re-tune K for the flood guard given merged two-chamber volume.
 - Post cadence: at ~2–4 House/day plus Senate, is one post / 2h still enough to
   keep up, or does the oldest-NEW queue slowly grow? Worth a glance once live.

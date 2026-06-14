@@ -59,7 +59,7 @@ favor of a local SQLite file driven by cron.
 - [012 — Court-scope bill identity (fix cross-session collision)](./012-court-scoped-bill-identity.md)
 
 ## Scraper coverage
-- [013 — Senate coverage (page 1 is House-only)](./013-senate-coverage.md) — `TODO`
+- [013 — Senate coverage (page 1 is House-only)](./013-senate-coverage.md) — `DONE`
 
 ## Toolchain / hygiene
 - [011 — Toolchain modernization: Biome + Vitest + tsconfig](./011-toolchain-modernization.md)

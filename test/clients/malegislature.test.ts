@@ -1,4 +1,14 @@
-import { findBillsInSearchPage, validatePotentialBill } from '../../src/clients/malegislature';
+import {
+  findBillsInSearchPage,
+  queryRecentBills,
+  queryRecentBillsForChamber,
+  validatePotentialBill
+} from '../../src/clients/malegislature';
+import {
+  type Chamber,
+  chamberSearchId,
+  getCurrentLegislature
+} from '../../src/legislature/generalCourt';
 import loadTextFixture from '../utils/utils';
 
 test('Extracts bills from the ma bill search page', () => {
@@ -216,6 +226,53 @@ test('throws exceptions on invalid bills', () => {
       url: 'https://malegislature.gov/Bills/191/H5086'
     })
   ).toThrow();
+});
+
+describe('queryRecentBills (#013: per-chamber scrape)', () => {
+  const legislature = getCurrentLegislature();
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  function stubFetchReturning(html: string): ReturnType<typeof vi.fn> {
+    const fetchMock = vi.fn(async () => new Response(html, { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+    return fetchMock;
+  }
+
+  it('refines the search by chamber via lawsbranchname', async () => {
+    const fetchMock = stubFetchReturning(loadTextFixture('searchPage.html'));
+    await queryRecentBillsForChamber(legislature, 'Senate');
+    const requestedUrl = String(fetchMock.mock.calls[0][0]);
+    expect(requestedUrl).toContain(`Refinements%5Blawsbranchname%5D=${chamberSearchId('Senate')}`);
+    expect(requestedUrl).toContain(`Refinements%5Blawsgeneralcourt%5D=${legislature.searchId}`);
+  });
+
+  it('scrapes both chambers and merges the results', async () => {
+    const fetchMock = stubFetchReturning(loadTextFixture('searchPage.html'));
+    const bills = await queryRecentBills(legislature);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const branches = fetchMock.mock.calls
+      .map((call) => String(call[0]))
+      .map((url) =>
+        (['House', 'Senate'] as Chamber[]).find((c) => url.includes(chamberSearchId(c)))
+      );
+    expect(new Set(branches)).toEqual(new Set(['House', 'Senate']));
+    // The fixture has 25 bills; both chamber fetches return it, so the merged
+    // list is the concatenation of the two scrapes.
+    expect(bills).toHaveLength(50);
+  });
+
+  it('throws when a chamber search fails', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('nope', { status: 500, statusText: 'Server Error' }))
+    );
+    await expect(queryRecentBillsForChamber(legislature, 'House')).rejects.toThrow(
+      'Search request failed'
+    );
+  });
 });
 
 test('Page that trigger bad extraction throws errors', () => {

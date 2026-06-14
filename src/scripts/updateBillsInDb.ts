@@ -11,8 +11,9 @@ const logger = Pino();
 
 // Flood guard: if a single scrape turns up more than this many previously-unseen
 // bills, we assume it's a session filing-deadline flood (thousands at once) and
-// seed the batch as SKIPPED rather than queueing it all to post. In steady state
-// a scrape sees 0–1 new bills, so this never trips. See #008.
+// seed the batch as SKIPPED rather than queueing it all to post. A scrape now
+// merges both chambers (House + Senate, see #013), so steady state is ~0–2 new
+// bills per run — still far below this, so it trips only on a real flood. See #008.
 const FLOOD_GUARD_THRESHOLD = 15;
 
 function toNewBill(scraped: ScrapedBill, courtNumber: number, status: BillStatus): NewBill {

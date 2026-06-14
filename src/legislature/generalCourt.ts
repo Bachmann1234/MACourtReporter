@@ -3,6 +3,21 @@ export type GeneralCourt = {
   searchId: string;
 };
 
+// The two chambers of the General Court. The site's bill search refines by
+// chamber via Refinements[lawsbranchname], whose value is the hex encoding of
+// the chamber name — the same scheme used for the general-court searchId below.
+export type Chamber = 'House' | 'Senate';
+export const CHAMBERS: readonly Chamber[] = ['House', 'Senate'];
+
+// The site's refiner tokens are the hex encoding of the human-readable label.
+function refinerToken(label: string): string {
+  return Buffer.from(label, 'utf8').toString('hex');
+}
+
+export function chamberSearchId(chamber: Chamber): string {
+  return refinerToken(chamber);
+}
+
 // The site's general-court refiner labels the active session "<n><suffix> (Current)",
 // e.g. "194th (Current)". The searchId is just the hex encoding of that label.
 const CURRENT_LABEL_SUFFIX = ' (Current)';
@@ -27,7 +42,7 @@ function ordinalSuffix(n: number): string {
 
 function searchIdForCurrentCourt(courtNumber: number): string {
   const label = `${courtNumber}${ordinalSuffix(courtNumber)}${CURRENT_LABEL_SUFFIX}`;
-  return Buffer.from(label, 'utf8').toString('hex');
+  return refinerToken(label);
 }
 
 // A new General Court convenes every 2 years on odd years:
