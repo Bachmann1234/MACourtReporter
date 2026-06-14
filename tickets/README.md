@@ -1,8 +1,10 @@
 # Tickets
 
-> **Status: all tickets `DONE` (June 2026).** The revival is complete and the bot
-> is operating; this directory is now a design record rather than an active
-> backlog. New work should get its own ticket appended below.
+> **Status: revival complete (June 2026); tickets #001–#013 are `DONE`.** The bot
+> is operating, so this directory is now mostly a design record. One follow-up is
+> open: [#014 — failure alerting](./014-failure-alerting.md), deliberately
+> deferred until the bot is actually running on the box. New work should get its
+> own ticket appended below.
 
 Tracking the work to revive MACourtReporter after its ~4-year dormancy.
 
@@ -58,6 +60,7 @@ favor of a local SQLite file driven by cron.
 - [007 — Switch persistence Postgres -> SQLite](./007-postgres-to-sqlite.md)
 - [008 — Run as a cron job; remove the Express server](./008-cron-not-server.md)
 - [009 — Decommission Fly / Docker deploy config](./009-decommission-fly.md)
+- [014 — Failure alerting (ntfy + Healthchecks dead-man's-switch)](./014-failure-alerting.md) — `TODO`, deferred until deployed
 
 ## Data layer
 - [012 — Court-scope bill identity (fix cross-session collision)](./012-court-scoped-bill-identity.md)
