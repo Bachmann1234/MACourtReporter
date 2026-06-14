@@ -76,6 +76,5 @@ now; the early-session flood is already filed and gets seeded as `SKIPPED`.
 - Logging/alerting: plain logfile + logrotate, or notify-on-failure somewhere?
   (The flood-guard + zero-results warnings are the events most worth surfacing.)
 - Backups: cron `sqlite3 .backup` / file copy of the db to another location?
-- Senate coverage (NOT this ticket): the search sorts by bill number desc and
-  House numbers dwarf Senate, so page 1 looks House-only — the bot may never
-  surface Senate bills. Worth verifying + a separate ticket if confirmed.
+- Senate coverage: confirmed a real gap (page 1 is House-only) and split out to
+  [#013](./013-senate-coverage.md).

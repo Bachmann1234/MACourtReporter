@@ -112,8 +112,8 @@ step 2):
 - **Upgrades:** `git pull && npm ci && npm run build`. Re-run `npm run db:migrate`
   if new migrations landed under `drizzle/`.
 
-## Known gap (not yet ticketed)
+## Known gap
 
-The site search sorts by bill number descending, and House numbers dwarf Senate,
-so page 1 looks House-only — the bot may never surface Senate bills. Worth
-verifying once it's live; if confirmed it needs its own ticket.
+The bot does **not** post Senate bills: the site search sorts by bill number
+descending and House numbers dwarf Senate, so the page-1 scrape is House-only.
+Confirmed and tracked in [ticket 013](./tickets/013-senate-coverage.md).

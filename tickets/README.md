@@ -58,6 +58,9 @@ favor of a local SQLite file driven by cron.
 ## Data layer
 - [012 — Court-scope bill identity (fix cross-session collision)](./012-court-scoped-bill-identity.md)
 
+## Scraper coverage
+- [013 — Senate coverage (page 1 is House-only)](./013-senate-coverage.md) — `TODO`
+
 ## Toolchain / hygiene
 - [011 — Toolchain modernization: Biome + Vitest + tsconfig](./011-toolchain-modernization.md)
 - [005 — Node 18 is EOL; upgrade runtime](./005-upgrade-node-runtime.md)
