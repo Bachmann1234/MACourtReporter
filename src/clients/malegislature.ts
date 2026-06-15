@@ -53,6 +53,43 @@ export function findBillsInSearchPage(pageHtml: string): ScrapedBill[] {
     .get();
 }
 
+// The bill-text page ends with a fixed site-wide disclaimer ("The information
+// contained in this website is for general information purposes only...") and
+// opens with a "× Bill <num>" close-button/header. Neither is bill content, so
+// we trim both to hand the summarizer just the legislative text (#015).
+const TEXT_BOILERPLATE_MARKER = 'The information contained in this website';
+const TEXT_HEADER_CHROME = /^×\s*Bill\s+\S+\s*/;
+
+// House bills are H./HD., Senate bills S./SD. — the bill-text URL is segmented by
+// the chamber name, so we derive it from the prefix (validatePotentialBill has
+// already guaranteed the number matches /(H|HD|SD|S)\.\d+/).
+export function chamberForBillNumber(billNumber: string): Chamber {
+  return billNumber.startsWith('S') ? 'Senate' : 'House';
+}
+
+// Pull the legislative body out of a bill-text page: collapse whitespace, drop
+// the leading chrome, and cut everything from the site disclaimer onward.
+export function extractBillText(pageHtml: string): string {
+  const $ = cheerioLoad(pageHtml);
+  $('script, style').remove();
+  const raw = $('.modalContent, main, body').first().text().replace(/\s+/g, ' ').trim();
+  const disclaimerAt = raw.indexOf(TEXT_BOILERPLATE_MARKER);
+  const body = disclaimerAt >= 0 ? raw.slice(0, disclaimerAt) : raw;
+  return body.replace(TEXT_HEADER_CHROME, '').trim();
+}
+
+// Fetch and clean the full text of a single bill. The bill's own URL plus
+// `/<Chamber>/Bill/Text` is the printable-text view. Throws on a failed request
+// so the caller can degrade gracefully (the summary reply is best-effort, #015).
+export async function fetchBillText(billNumber: string, billUrl: string): Promise<string> {
+  const chamber = chamberForBillNumber(billNumber);
+  const response = await fetch(`${billUrl}/${chamber}/Bill/Text`);
+  if (!response.ok) {
+    throw Error(`Bill text request failed: ${response.status} ${response.statusText}`);
+  }
+  return extractBillText(await response.text());
+}
+
 // Page 1 of the recent-bills search for a single chamber. The search sorts by
 // bill number desc across the whole court; since the House files far more bills
 // than the Senate, an unrefined search never surfaces a single Senate bill (see

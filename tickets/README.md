@@ -1,10 +1,11 @@
 # Tickets
 
 > **Status: revival complete (June 2026); tickets #001–#013 are `DONE`.** The bot
-> is operating, so this directory is now mostly a design record. One follow-up is
-> open: [#014 — failure alerting](./014-failure-alerting.md), deliberately
-> deferred until the bot is actually running on the box. New work should get its
-> own ticket appended below.
+> is operating, so this directory is now mostly a design record.
+> [#015 — value-gated summary reply](./015-summary-reply.md) is implemented
+> (branch `summary-reply`); [#014 — failure alerting](./014-failure-alerting.md)
+> remains open, deferred until the bot is actually running on the box. New work
+> should get its own ticket appended below.
 
 Tracking the work to revive MACourtReporter after its ~4-year dormancy.
 
@@ -51,6 +52,7 @@ virtualenv for any Python).
 ## Twitter -> Bluesky
 - [004 — Replace Twitter posting with Bluesky](./004-replace-twitter-with-bluesky.md)
 - [010 — Post text composition: deterministic vs. Haiku summary](./010-post-composition.md)
+- [015 — Value-gated plain-English summary reply](./015-summary-reply.md) — `DONE`
 
 ## Hosting / infra
 **Decision (June 2026): self-host on the basement box.** See

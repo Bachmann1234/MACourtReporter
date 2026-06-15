@@ -34,7 +34,12 @@ export const posts = sqliteTable('post', {
   // The post's URI on the network (e.g. a Bluesky at:// URI). Populated once the
   // posting backend can return it (#004); nullable until then.
   uri: text('uri'),
-  text: text('text').notNull()
+  text: text('text').notNull(),
+  // Optional plain-English summary posted as a threaded reply (#015). Null when
+  // the model judged a summary wouldn't add value, or the reply failed/was off.
+  // Kept on the same row to preserve "one row per bill".
+  replyUri: text('reply_uri'),
+  replyText: text('reply_text')
 });
 
 export type Bill = typeof bills.$inferSelect;
