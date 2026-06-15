@@ -1,4 +1,7 @@
 import {
+  chamberForBillNumber,
+  extractBillText,
+  fetchBillText,
   findBillsInSearchPage,
   queryRecentBills,
   queryRecentBillsForChamber,
@@ -271,6 +274,50 @@ describe('queryRecentBills (#013: per-chamber scrape)', () => {
     );
     await expect(queryRecentBillsForChamber(legislature, 'House')).rejects.toThrow(
       'Search request failed'
+    );
+  });
+});
+
+describe('bill text (#015)', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  test('derives the chamber from the bill number prefix', () => {
+    expect(chamberForBillNumber('H.5504')).toBe('House');
+    expect(chamberForBillNumber('HD.123')).toBe('House');
+    expect(chamberForBillNumber('S.3120')).toBe('Senate');
+    expect(chamberForBillNumber('SD.987')).toBe('Senate');
+  });
+
+  test('extractBillText strips the leading chrome and trailing disclaimer', () => {
+    const text = extractBillText(loadTextFixture('billText.html'));
+    expect(text.startsWith('SECTION 1.')).toBe(true);
+    expect(text).toContain('110 percent of the fair market value');
+    expect(text).not.toContain('×');
+    expect(text).not.toContain('Bill H.9999');
+    expect(text).not.toContain('information contained in this website');
+  });
+
+  test('fetchBillText requests the chamber-segmented text URL', async () => {
+    const fetchMock = vi.fn(
+      async (..._args: unknown[]) => new Response(loadTextFixture('billText.html'))
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    const text = await fetchBillText('S.3120', 'https://malegislature.gov/Bills/194/S3120');
+    expect(String(fetchMock.mock.calls[0][0])).toBe(
+      'https://malegislature.gov/Bills/194/S3120/Senate/Bill/Text'
+    );
+    expect(text).toContain('SECTION 1.');
+  });
+
+  test('fetchBillText throws on a failed request', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response('nope', { status: 404, statusText: 'Not Found' }))
+    );
+    await expect(fetchBillText('H.1', 'https://malegislature.gov/Bills/194/H1')).rejects.toThrow(
+      'Bill text request failed'
     );
   });
 });

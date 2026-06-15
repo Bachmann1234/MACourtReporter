@@ -39,6 +39,13 @@ BLUESKY_HANDLE=yourbot.bsky.social
 BLUESKY_APP_PASSWORD=xxxx-xxxx-xxxx-xxxx
 # Optional. Defaults to ./data/macourtreporter.db if omitted.
 DB_PATH=/home/you/MACourtReporter/data/macourtreporter.db
+# Optional (ticket #015). When set, postBill adds a plain-English summary as a
+# threaded reply where the title doesn't tell the whole story. Unset = title-only
+# posting, exactly as before.
+ANTHROPIC_API_KEY=sk-ant-...
+# Optional. Overrides the summary model (default claude-sonnet-4-6; e.g.
+# claude-haiku-4-5 for a cheaper run).
+SUMMARY_MODEL=claude-sonnet-4-6
 ```
 
 Create the database / apply migrations:

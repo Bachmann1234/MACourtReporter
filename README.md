@@ -21,6 +21,14 @@ from the environment too — `BLUESKY_HANDLE` and `BLUESKY_APP_PASSWORD` (an app
 password from Bluesky settings, not the account password). All of these live in
 a `.env` on the box.
 
+Optionally, `postBill` will add a plain-English summary as a threaded reply when
+it judges the bill's official title doesn't tell the whole story (ticket
+[#015](./tickets/015-summary-reply.md)). This is **off unless `ANTHROPIC_API_KEY`
+is set** — without it, posting behaves exactly as before (title-only). The model
+decides per-bill whether a summary adds value and skips when it would just
+restate the title; a failure anywhere in the summary path never blocks the main
+post. `SUMMARY_MODEL` overrides the default (`claude-sonnet-4-6`).
+
 ```sh
 npm ci
 npm run build
